@@ -133,6 +133,14 @@ namespace MqttSender
              *                  General BUTTONS                     *
              ********************************************************/
 
+            this.validateBtn.Location = new System.Drawing.Point(446, 408);
+            this.validateBtn.Name = "validateBtn";
+            this.validateBtn.Size = new System.Drawing.Size(92, 21);
+            this.validateBtn.TabIndex = 2;
+            this.validateBtn.Text = "입력 값 확인";
+            this.validateBtn.UseVisualStyleBackColor = true;
+            this.validateBtn.Click += new System.EventHandler(this.button3_Click);
+            
             this.showExampleDataBtn.Location = new System.Drawing.Point(544, 408);
             this.showExampleDataBtn.Name = "showExampleDataBtn";
             this.showExampleDataBtn.Size = new System.Drawing.Size(107, 21);
@@ -146,14 +154,7 @@ namespace MqttSender
             this.publishMsgBtn.TabIndex = 0;
             this.publishMsgBtn.Text = "메시지 전송 시작";
             this.publishMsgBtn.UseVisualStyleBackColor = true;
-
-            this.validateBtn.Location = new System.Drawing.Point(446, 408);
-            this.validateBtn.Name = "validateBtn";
-            this.validateBtn.Size = new System.Drawing.Size(92, 21);
-            this.validateBtn.TabIndex = 2;
-            this.validateBtn.Text = "입력 ";
-            this.validateBtn.UseVisualStyleBackColor = true;
-            this.validateBtn.Click += new System.EventHandler(this.button3_Click);
+         
 
             /**
              * TAB 컨트롤
