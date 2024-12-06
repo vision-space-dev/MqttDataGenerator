@@ -29,6 +29,7 @@ namespace MqttSender
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.publishMsgBtn = new System.Windows.Forms.Button();
             this.showExampleDataBtn = new System.Windows.Forms.Button();
             this.validateBtn = new System.Windows.Forms.Button();
@@ -109,6 +110,7 @@ namespace MqttSender
             this.Controls.Add(this.publishMsgBtn);
             this.Name = "Form1";
             this.Text = "Vision Space MQTT 송신기";
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
             this.amrTabPage.ResumeLayout(false);
