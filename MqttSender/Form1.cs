@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MqttSender.generator;
 using MqttSender.model;
 using MqttSender.service;
 
@@ -26,6 +27,7 @@ namespace MqttSender
         private const int DEFAULT_AUTORUN_TIME = 60; //in seconds
         private const int DEFAUKT_Z_VALUE = 0;
         private const string DEFAULT_ROBOT_SIDE_VALUE = "TEST_SID";
+        private RobotDataGenerator RobotDataGenerator = new RobotDataGenerator();
         
         private void InitializeFields()
         {
@@ -62,6 +64,7 @@ namespace MqttSender
             {
                 InitializeFields();
             }
+
             this.mqttUserNameInputF.Enabled = false;
             this.mqttPassInputF.Enabled = false;
         }
@@ -70,7 +73,7 @@ namespace MqttSender
         {
             if (float.TryParse(input, out float result))
             {
-                return result;
+                return (float)Math.Round(result, 4);
             }
             else
             {
@@ -94,7 +97,7 @@ namespace MqttSender
         {
             try
             {
-                return new AMRRobotInputObject(
+                AMRRobotInputObject inputObject = new AMRRobotInputObject(
                     robotSidInputField.Text,
                     robotModelInputField.Text,
                     robotNameInputField.Text,
@@ -110,6 +113,14 @@ namespace MqttSender
                     eventTypeInputF.Text,
                     parseStringToInt(autoSendDurationInputF.Text)
                 );
+
+                bool isValid = inputObject.IsValidInputs();
+                if (isValid == false)
+                {
+                    throw new InvalidOperationException("메시지 기능 값을 넣어 주세요");
+                }
+
+                return inputObject;
             }
             catch (InvalidOperationException ex)
             {
@@ -192,7 +203,25 @@ namespace MqttSender
 
         private void showExampleDataBtn_Click(object sender, EventArgs e)
         {
+            List<AMRRobotInputObject> amrRobotInputObjects = new List<AMRRobotInputObject>();
+            AMRRobotInputObject amrRobotInputObject = createRobotInputObjectInstance();
             
+            if (amrRobotInputObject != null)
+            {
+
+                amrRobotInputObjects.Add(amrRobotInputObject);
+
+                // Generate JSON data from the list of AMRRobotInputObject
+                RobotDataGenerator robotDataGenerator = new RobotDataGenerator();
+                string jsonData = robotDataGenerator.GenerateRobotDataJson(amrRobotInputObjects);
+                
+                MessageBox.Show(jsonData, "Generated Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                // If the object was not created (return null), notify the user
+                MessageBox.Show("입력 값 오류.", "실패", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
         
         private void publishMsgBtn_Click(object sender, EventArgs e)

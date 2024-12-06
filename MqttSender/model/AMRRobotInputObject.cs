@@ -1,9 +1,12 @@
-﻿namespace MqttSender.model
+﻿using System;
+using System.Collections.Generic;
+
+namespace MqttSender.model
 {
     public class AMRRobotInputObject
     {
         public AMRRobotInputObject(string robotSid, string robotModelName, string robotName,
-            float maxX, float maxY, float maxZ, float minX, float minY, float minZ,
+            float minX, float minY, float minZ, float maxX, float maxY, float maxZ,
             int messagesPerSeconds, int messageDelaySeconds, int locationVariantValue,
             string eventType, int runTimeSeconds)
         {
@@ -45,18 +48,37 @@
         
         public bool IsValidInputs()
         {
-            // Ensure required string fields are not null or empty
-            if (string.IsNullOrEmpty(RobotSid) ||
-                string.IsNullOrEmpty(RobotModelName) ||
-                string.IsNullOrEmpty(RobotName) ||
-                string.IsNullOrEmpty(EventType))
+            List<string> nullOrEmptyFields = new List<string>();
+
+            // Check required string fields for null or empty
+            if (string.IsNullOrEmpty(RobotSid))
             {
+                nullOrEmptyFields.Add(nameof(RobotSid));
+            }
+            if (string.IsNullOrEmpty(RobotModelName))
+            {
+                nullOrEmptyFields.Add(nameof(RobotModelName));
+            }
+            if (string.IsNullOrEmpty(RobotName))
+            {
+                nullOrEmptyFields.Add(nameof(RobotName));
+            }
+            if (string.IsNullOrEmpty(EventType))
+            {
+                nullOrEmptyFields.Add(nameof(EventType));
+            }
+
+            // Log null or empty fields
+            if (nullOrEmptyFields.Count > 0)
+            {
+                Console.WriteLine("Null or empty fields detected: " + string.Join(", ", nullOrEmptyFields));
                 return false;
             }
 
             // Ensure coordinates are within a realistic range
             if (MinX > MaxX || MinY > MaxY || MinZ > MaxZ)
             {
+                Console.WriteLine("Invalid coordinate ranges.");
                 return false;
             }
 
@@ -66,6 +88,7 @@
                 LocationVariantValue < 0 ||
                 RunTimeSeconds < 0)
             {
+                Console.WriteLine("Invalid numeric values detected.");
                 return false;
             }
 
