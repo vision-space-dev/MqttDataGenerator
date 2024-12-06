@@ -144,14 +144,14 @@ namespace MqttSender
             this.publishMsgBtn.Name = "publishMsgBtn";
             this.publishMsgBtn.Size = new System.Drawing.Size(106, 21);
             this.publishMsgBtn.TabIndex = 0;
-            this.publishMsgBtn.Text = "자동 PUBLUSH";
+            this.publishMsgBtn.Text = "메시지 전송 시작";
             this.publishMsgBtn.UseVisualStyleBackColor = true;
 
             this.validateBtn.Location = new System.Drawing.Point(446, 408);
             this.validateBtn.Name = "validateBtn";
             this.validateBtn.Size = new System.Drawing.Size(92, 21);
             this.validateBtn.TabIndex = 2;
-            this.validateBtn.Text = "Validate";
+            this.validateBtn.Text = "입력 점검";
             this.validateBtn.UseVisualStyleBackColor = true;
             this.validateBtn.Click += new System.EventHandler(this.button3_Click);
 
