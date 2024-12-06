@@ -108,7 +108,7 @@ namespace MqttSender
             this.Controls.Add(this.showExampleDataBtn);
             this.Controls.Add(this.publishMsgBtn);
             this.Name = "Form1";
-            this.Text = "MQTT 송신기";
+            this.Text = "Vision Space MQTT 송신기";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
             this.amrTabPage.ResumeLayout(false);
