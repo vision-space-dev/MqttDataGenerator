@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MqttSender.model;
 using MqttSender.service;
 
 namespace MqttSender
@@ -25,8 +26,6 @@ namespace MqttSender
         private const int DEFAULT_AUTORUN_TIME = 60; //in seconds
         private const int DEFAUKT_Z_VALUE = 0;
         private const string DEFAULT_ROBOT_SIDE_VALUE = "TEST_SID";
-        
-
         
         private void InitializeFields()
         {
@@ -67,7 +66,58 @@ namespace MqttSender
             this.mqttPassInputF.Enabled = false;
         }
 
-
+        private float parseStringToFloat(string input)
+        {
+            if (float.TryParse(input, out float result))
+            {
+                return result;
+            }
+            else
+            {
+                throw new InvalidOperationException("Invalid input for a float value.");
+            }
+        }
+        
+        private int parseStringToInt(string input)
+        {
+            if (int.TryParse(input, out int result))
+            {
+                return result;
+            }
+            else
+            {
+                throw new InvalidOperationException("Invalid input for a int value.");
+            }
+        }
+        
+        private AMRRobotInputObject createRobotInputObjectInstance()
+        {
+            try
+            {
+                return new AMRRobotInputObject(
+                    robotSidInputField.Text,
+                    robotModelInputField.Text,
+                    robotNameInputField.Text,
+                    parseStringToFloat(minXValInputF.Text),
+                    parseStringToFloat(minYValInputF.Text),
+                    parseStringToFloat(minZValInputF.Text),
+                    parseStringToFloat(maxXValInputF.Text),
+                    parseStringToFloat(maxYValInputF.Text),
+                    parseStringToFloat(maxZValInputF.Text),
+                    parseStringToInt(msgPerSecondInputF.Text),
+                    parseStringToInt(msgDelayTimeInputF.Text),
+                    parseStringToInt(locationVariantInputF.Text),
+                    eventTypeInputF.Text,
+                    parseStringToInt(autoSendDurationInputF.Text)
+                );
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(ex.Message, "입력 값 오류", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return null;
+            }
+        }
+        
         private void Form1_Load(object sender, EventArgs e)
         {
 
@@ -197,7 +247,7 @@ namespace MqttSender
             catch (Exception ex)
             {
 
-                MessageBox.Show($"MQTT 브로커 접속 실패: {ex.Message}");
+                MessageBox.Show($"MQTT 브로커 접속 실패: \n {ex.Message}");
             }
             finally
             {
