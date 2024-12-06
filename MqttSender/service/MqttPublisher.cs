@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using MQTTnet;
 using MQTTnet.Client;
 using System.Threading.Tasks;
@@ -16,7 +17,9 @@ namespace MqttSender.service
             _mqttClient = factory.CreateMqttClient();
         }
         
-        public async Task ConnectAsync(string brokerHost, int brokerPort, string clientId, bool withTls = false, string username = null, string password = null)
+        public async Task ConnectAsync(string brokerHost, int brokerPort, string clientId,
+            bool withTls = false, string username = null, string password = null,
+            int timeoutMilliseconds = 5000)
         {
             var optionsBuilder = new MqttClientOptionsBuilder()
                 .WithClientId(clientId)
@@ -35,15 +38,18 @@ namespace MqttSender.service
 
             var options = optionsBuilder.Build();
 
-            try
+            using (var cts = new CancellationTokenSource(timeoutMilliseconds))
             {
-                await _mqttClient.ConnectAsync(options);
-                Console.WriteLine("Connected to MQTT broker.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error connecting to MQTT broker: {ex.Message}");
-                throw;
+                try
+                {
+                    await _mqttClient.ConnectAsync(options, cts.Token);
+                    Console.WriteLine("Connected to MQTT broker.");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error connecting to MQTT broker: {ex.Message}");
+                    throw;
+                }
             }
         }
 

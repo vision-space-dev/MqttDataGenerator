@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MqttSender.service;
@@ -163,40 +164,63 @@ namespace MqttSender
 
         private async void connectionTestBtn1_Click(object sender, EventArgs e)
         {
-            progressBar1.Style = ProgressBarStyle.Marquee;
-            progressBar1.MarqueeAnimationSpeed = 30;
-
-            MqttPublisher mqttPublisher = new MqttPublisher();
-            bool useSSL = isSSLConnectCheckBox.Checked;
-
+            var currentContext = SynchronizationContext.Current;
+            
             try
             {
+                DisableForm();
+                Cursor = Cursors.WaitCursor;
+                
+                currentContext?.Post(_ => 
+                {
+                    progressBar1.Style = ProgressBarStyle.Marquee;
+                    progressBar1.MarqueeAnimationSpeed = 30;
+                }, null);
+                
+                progressBar1.Style = ProgressBarStyle.Marquee;
+                progressBar1.MarqueeAnimationSpeed = 30;
+
+                MqttPublisher mqttPublisher = new MqttPublisher();
+                bool useSSL = isSSLConnectCheckBox.Checked;
+                
                 if (useSSL)
                 {
-                    await mqttPublisher.ConnectAsync(mqttIpInputF.Text, int.Parse(mqttPortInputF.Text), mqttClientIdF.Text, true);   
+                    await mqttPublisher.ConnectAsync(mqttIpInputF.Text, int.Parse(mqttPortInputF.Text), mqttClientIdF.Text, true, timeoutMilliseconds: 5000);
                 }
-                await mqttPublisher.ConnectAsync(mqttIpInputF.Text, int.Parse(mqttPortInputF.Text), mqttClientIdF.Text);
+                else
+                {
+                    await mqttPublisher.ConnectAsync(mqttIpInputF.Text, int.Parse(mqttPortInputF.Text), mqttClientIdF.Text, false, timeoutMilliseconds: 5000);
+                }
 
-                // Stop the marquee animation
-                progressBar1.Style = ProgressBarStyle.Blocks;
-                progressBar1.Value = progressBar1.Maximum;
-
-                MessageBox.Show("Connected to MQTT broker and sent a test message successfully!");
+                MessageBox.Show("MQTT 브로커 접속 성공");
             }
             catch (Exception ex)
             {
-                // Stop assigning value to progress manually as failed
-                progressBar1.Style = ProgressBarStyle.Blocks;
-                progressBar1.Value = 0;
 
-                MessageBox.Show($"Failed to connect to MQTT broker: {ex.Message}");
+                MessageBox.Show($"MQTT 브로커 접속 실패: {ex.Message}");
             }
             finally
             {
-                // Ensure progress bar stops animation regardless of success/failure
-                progressBar1.MarqueeAnimationSpeed = 0;
-                progressBar1.Value = 0;
+                currentContext?.Post(_ => 
+                {
+                    Cursor = Cursors.Default;
+                    EnableForm();
+                }, null);
             }
+        }
+        
+        
+        private void DisableForm()
+        {
+            this.Enabled = false; // Disables the entire form
+        }
+
+        private void EnableForm()
+        {
+            this.Enabled = true;  // Re-enables the entire form
+            progressBar1.Style = ProgressBarStyle.Blocks;
+            progressBar1.MarqueeAnimationSpeed = 0;
+            progressBar1.Value = 0;
         }
     }
 }
