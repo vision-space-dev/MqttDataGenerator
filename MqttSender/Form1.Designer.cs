@@ -139,7 +139,7 @@ namespace MqttSender
             this.validateBtn.TabIndex = 2;
             this.validateBtn.Text = "입력 값 확인";
             this.validateBtn.UseVisualStyleBackColor = true;
-            this.validateBtn.Click += new System.EventHandler(this.button3_Click);
+            this.validateBtn.Click += new System.EventHandler(this.validateBtn_Click);
             
             this.showExampleDataBtn.Location = new System.Drawing.Point(544, 408);
             this.showExampleDataBtn.Name = "showExampleDataBtn";
@@ -147,6 +147,7 @@ namespace MqttSender
             this.showExampleDataBtn.TabIndex = 1;
             this.showExampleDataBtn.Text = "예시 데이터 보기";
             this.showExampleDataBtn.UseVisualStyleBackColor = true;
+            this.showExampleDataBtn.Click += new System.EventHandler(this.showExampleDataBtn_Click);
             
             this.publishMsgBtn.Location = new System.Drawing.Point(657, 408);
             this.publishMsgBtn.Name = "publishMsgBtn";
@@ -154,6 +155,7 @@ namespace MqttSender
             this.publishMsgBtn.TabIndex = 0;
             this.publishMsgBtn.Text = "메시지 전송 시작";
             this.publishMsgBtn.UseVisualStyleBackColor = true;
+            this.publishMsgBtn.Click += new System.EventHandler(this.publishMsgBtn_Click);
          
 
             /**

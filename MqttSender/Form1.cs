@@ -74,7 +74,7 @@ namespace MqttSender
             }
             else
             {
-                throw new InvalidOperationException("Invalid input for a float value.");
+                throw new InvalidOperationException("좌표 값을 넣어주세요");
             }
         }
         
@@ -86,7 +86,7 @@ namespace MqttSender
             }
             else
             {
-                throw new InvalidOperationException("Invalid input for a int value.");
+                throw new InvalidOperationException("메시지 기능 값을 넣어 주세요");
             }
         }
         
@@ -171,9 +171,33 @@ namespace MqttSender
 
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        
+        //Button click events
+        
+        private void validateBtn_Click(object sender, EventArgs e)
         {
+            var robotInputObject = createRobotInputObjectInstance();
+            
+            if (robotInputObject != null)
+            {
+                // If the object was created successfully, perform further actions
+                MessageBox.Show("입력 값 정상.", "성공", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                // If the object was not created (return null), notify the user
+                MessageBox.Show("입력 값 오류.", "실패", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
+        private void showExampleDataBtn_Click(object sender, EventArgs e)
+        {
+            
+        }
+        
+        private void publishMsgBtn_Click(object sender, EventArgs e)
+        {
+            
         }
         
 
