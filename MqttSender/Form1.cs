@@ -40,20 +40,12 @@ namespace MqttSender
             locationVariantInputF.Text = DEFAULT_LOCATION_VARIANT_VALUE.ToString();
             eventTypeInputF.Text = DEFAULT_EVENT_TYPE;
             autoSendDurationInputF.Text = DEFAULT_AUTORUN_TIME.ToString();
-            maxZValInputF.Text = DEFAUKT_Z_VALUE.ToString();
-            minZValInputF.Text = DEFAUKT_Z_VALUE.ToString();
             robotSidInputField.Text = DEFAULT_ROBOT_SIDE_VALUE;
             msgPerSecondInputF.KeyPress += inputF_AllowIntegerOnly_TextChanged;
             msgDelayTimeInputF.KeyPress += inputF_AllowIntegerOnly_TextChanged;
             locationVariantInputF.KeyPress += inputF_AllowIntegerOnly_TextChanged;
             msgPerSecondInputF.KeyPress += inputF_AllowIntegerOnly_TextChanged;
             autoSendDurationInputF.KeyPress += inputF_AllowIntegerOnly_TextChanged;
-            minXValInputF.KeyPress += inputF_AllowDoubleOnly_TextChanged;
-            minYValInputF.KeyPress += inputF_AllowDoubleOnly_TextChanged;
-            minZValInputF.KeyPress += inputF_AllowDoubleOnly_TextChanged;
-            maxXValInputF.KeyPress += inputF_AllowDoubleOnly_TextChanged;
-            maxYValInputF.KeyPress += inputF_AllowDoubleOnly_TextChanged;
-            maxZValInputF.KeyPress += inputF_AllowDoubleOnly_TextChanged;
             mqttPortInputF.KeyPress += inputF_AllowIntegerOnly_TextChanged;
         }
 
@@ -101,12 +93,6 @@ namespace MqttSender
                     robotSidInputField.Text,
                     robotModelInputField.Text,
                     robotNameInputField.Text,
-                    parseStringToFloat(minXValInputF.Text),
-                    parseStringToFloat(minYValInputF.Text),
-                    parseStringToFloat(minZValInputF.Text),
-                    parseStringToFloat(maxXValInputF.Text),
-                    parseStringToFloat(maxYValInputF.Text),
-                    parseStringToFloat(maxZValInputF.Text),
                     parseStringToInt(msgPerSecondInputF.Text),
                     parseStringToInt(msgDelayTimeInputF.Text),
                     parseStringToInt(locationVariantInputF.Text),
@@ -312,6 +298,25 @@ namespace MqttSender
             }
         }
         
+        private void dynamicLocVariantLabel_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void taskIdLabel_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+        }
         
         private void DisableForm()
         {
@@ -324,6 +329,18 @@ namespace MqttSender
             progressBar1.Style = ProgressBarStyle.Blocks;
             progressBar1.MarqueeAnimationSpeed = 0;
             progressBar1.Value = 0;
+        }
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        private void addTaskBtn_Click(object sender, EventArgs e)
+        {
+            RobotTask task = new RobotTask();
+            string taskId = taskIdInputField.Text;
+            throw new System.NotImplementedException();
         }
     }
 }

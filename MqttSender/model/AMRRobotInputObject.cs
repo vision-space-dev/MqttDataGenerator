@@ -6,19 +6,12 @@ namespace MqttSender.model
     public class AMRRobotInputObject
     {
         public AMRRobotInputObject(string robotSid, string robotModelName, string robotName,
-            float minX, float minY, float minZ, float maxX, float maxY, float maxZ,
             int messagesPerSeconds, int messageDelaySeconds, int locationVariantValue,
             string eventType, int runTimeSeconds)
         {
             this.RobotSid = robotSid;
             this.RobotModelName = robotModelName;
             this.RobotName = robotName;
-            this.MaxX = maxX;
-            this.MaxY = maxY;
-            this.MaxZ = maxZ;
-            this.MinX = minX;
-            this.MinY = minY;
-            this.MinZ = minZ;
             this.MessagesPerSeconds = messagesPerSeconds;
             this.MessageDelaySeconds = messageDelaySeconds;
             this.LocationVariantValue = locationVariantValue;
@@ -29,12 +22,6 @@ namespace MqttSender.model
         public string RobotSid { get; }
         public string RobotModelName { get; }
         public string RobotName { get; }
-        public float MinX { get; }
-        public float MinY { get; }
-        public float MinZ { get; }
-        public float MaxX { get; }
-        public float MaxY { get; }
-        public float MaxZ { get; }
         
         public int MessagesPerSeconds { get; }
         
@@ -72,13 +59,6 @@ namespace MqttSender.model
             if (nullOrEmptyFields.Count > 0)
             {
                 Console.WriteLine("Null or empty fields detected: " + string.Join(", ", nullOrEmptyFields));
-                return false;
-            }
-
-            // Ensure coordinates are within a realistic range
-            if (MinX > MaxX || MinY > MaxY || MinZ > MaxZ)
-            {
-                Console.WriteLine("Invalid coordinate ranges.");
                 return false;
             }
 

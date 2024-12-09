@@ -4,34 +4,6 @@
     using System.Collections.Generic;
     using Newtonsoft.Json;
 
-    public class Sensor
-    {
-        public string Status { get; set; }
-        public double Range { get; set; }
-        public int DataFrequency { get; set; }
-        public List<string> Data { get; set; }
-        public string Resolution { get; set; }
-        public string ImageFeedURL { get; set; }
-        public int FrameRate { get; set; }
-        public bool ObstacleDetected { get; set; }
-        public double CurrentTemperature { get; set; }
-        public string Unit { get; set; }
-        public int CurrentHumidity { get; set; }
-    }
-
-    public class Task
-    {
-        public string TaskId { get; set; }
-        public string Type { get; set; }
-        public string Priority { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime EstimatedEndTime { get; set; }
-        public string Status { get; set; }
-        public Position Origin { get; set; }
-        public Position TargetLocation { get; set; }
-        public Payload Payload { get; set; }
-    }
-
     public class Payload
     {
         public string Type { get; set; }
@@ -47,46 +19,65 @@
         public double Height { get; set; }
     }
 
-    public class Position
-    {
-        public double X { get; set; }
-        public double Y { get; set; }
-        public double Z { get; set; }
-        public double Orientation { get; set; }
-        public DateTime Timestamp { get; set; }
-    }
-
     public class Battery
     {
+        [JsonProperty("level")]
         public double Level { get; set; }
+        
+        [JsonProperty("charging")]
         public bool Charging { get; set; }
+        
+        [JsonProperty("voltage")]
         public double Voltage { get; set; }
+        
+        [JsonProperty("current")]
         public double Current { get; set; }
+        
+        [JsonProperty("temperature")]
         public double Temperature { get; set; }
+        
+        [JsonProperty("health")]
         public string Health { get; set; }
     }
 
     public class RobotData
     {
+        
+        [JsonProperty("robotId")]
         public string RobotId { get; set; }
+        
+        [JsonProperty("status")]
         public string Status { get; set; }
+        
+        [JsonProperty("robot-type")]
         public string RobotType { get; set; }
+        
+        [JsonProperty("robot-model")]
         public string RobotModel { get; set; }
+        
+        [JsonProperty("position")]
         public Position Position { get; set; }
+        
+        [JsonProperty("battery")]
         public Battery Battery { get; set; }
-        public List<Task> Tasks { get; set; }
-        public Dictionary<string, Sensor> Sensors { get; set; }
-        // Additional properties can be added here for Maintenance, Network, etc.
+        
+        [JsonProperty("tasks")]
+        public List<RobotTask> Tasks { get; set; }
     }
 
     public class RobotEvent
     {
+        
+        [JsonProperty("eventType")]
         public string EventType { get; set; }
+        
+        [JsonProperty("robotData")]
         public RobotData RobotData { get; set; }
     }
 
     public class RobotDataCollection
     {
+        [JsonProperty("robot-data")]
         public List<RobotEvent> RobotData { get; set; }
     }
 }

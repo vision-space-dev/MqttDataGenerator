@@ -12,33 +12,12 @@ namespace MqttSender.generator
 
         public Position GenerateRandomPosition(AMRRobotInputObject amrInputObject)
         {
-            float rangeX = amrInputObject.MaxX - amrInputObject.MinX;
-            float rangeY = amrInputObject.MaxY - amrInputObject.MinY;
-            float rangeZ = amrInputObject.MaxZ - amrInputObject.MinZ;
             
-            float newX = amrInputObject.MinX + (float)(_random.NextDouble() * rangeX);
-            float newY = amrInputObject.MinY + (float)(_random.NextDouble() * rangeY);
-            float newZ = amrInputObject.MinZ + (float)(_random.NextDouble() * rangeZ);
-            
-            newX = ApplyVariation(newX, amrInputObject.LocationVariantValue);
-            newY = ApplyVariation(newY, amrInputObject.LocationVariantValue);
-            newZ = ApplyVariation(newZ, amrInputObject.LocationVariantValue);
-
             return new Position
             {
-                X = newX,
-                Y = newY,
-                Z = newZ,
                 Orientation = 0, // Assuming starting orientation
                 Timestamp = DateTime.Now
             };
-        }
-        
-        private float ApplyVariation(float value, int variantValue)
-        {
-            // Adjust the position value with a small variation
-            float variation = (float)(_random.NextDouble() * variantValue / 100.0);
-            return value + variation;
         }
         
 public string GenerateRobotDataJson(List<AMRRobotInputObject> amrInputObjects)
@@ -55,7 +34,7 @@ public string GenerateRobotDataJson(List<AMRRobotInputObject> amrInputObjects)
                 var robotData = new RobotData
                 {
                     RobotId = amrInput.RobotSid,
-                    Status = "Active", // Example status
+                    Status = "active", // Example status
                     RobotType = "AMR_ROBOT", // Assuming AMR for all
                     RobotModel = amrInput.RobotModelName,
                     Position = position,
@@ -68,18 +47,7 @@ public string GenerateRobotDataJson(List<AMRRobotInputObject> amrInputObjects)
                         Temperature = 35.0,
                         Health = "Good"
                     },
-                    Tasks = new List<Task>(), // Can add tasks if needed
-                    Sensors = new Dictionary<string, Sensor>() // Example sensor data
-                    {
-                        { "Sensor1", new Sensor {
-                            Status = "Operational",
-                            Range = 50,
-                            DataFrequency = 1,
-                            CurrentTemperature = 25,
-                            Unit = "Celsius",
-                            CurrentHumidity = 40
-                        }}
-                    }
+                    Tasks = new List<RobotTask>(), // Can add tasks if needed
                 };
 
                 var robotEvent = new RobotEvent
