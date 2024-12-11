@@ -32,13 +32,13 @@ namespace MqttSender
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.publishMsgBtn = new System.Windows.Forms.Button();
-            this.showExampleDataBtn = new System.Windows.Forms.Button();
             this.validateBtn = new System.Windows.Forms.Button();
+            this.showExampleDataBtn = new System.Windows.Forms.Button();
+            this.publishMsgBtn = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.amrTabPage = new System.Windows.Forms.TabPage();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.taskListPanel = new System.Windows.Forms.Panel();
+            this.taskListView = new System.Windows.Forms.ListView();
             this.RemoveTaskBtn = new System.Windows.Forms.Button();
             this.seeTaskDetailBtn = new System.Windows.Forms.Button();
             this.taskGroupBox = new System.Windows.Forms.GroupBox();
@@ -54,16 +54,12 @@ namespace MqttSender
             this.taskIdInputField = new System.Windows.Forms.TextBox();
             this.addTaskBtn = new System.Windows.Forms.Button();
             this.additionalDetailGroupBox = new System.Windows.Forms.GroupBox();
-            this.autoSendDurationInputF = new System.Windows.Forms.TextBox();
-            this.autoRunTimeLabel = new System.Windows.Forms.Label();
             this.msgDelayTimeLabel = new System.Windows.Forms.Label();
             this.msgDelayTimeInputF = new System.Windows.Forms.TextBox();
             this.msgEventTypeLabel = new System.Windows.Forms.Label();
-            this.dynamicLocVariantLabel = new System.Windows.Forms.Label();
-            this.msgPerSecGenerateLabel = new System.Windows.Forms.Label();
+            this.msgTickPerDelay = new System.Windows.Forms.Label();
             this.eventTypeInputF = new System.Windows.Forms.TextBox();
-            this.locationVariantInputF = new System.Windows.Forms.TextBox();
-            this.msgPerSecondInputF = new System.Windows.Forms.TextBox();
+            this.tickPerDelayTime = new System.Windows.Forms.TextBox();
             this.robotDetailGroupBox = new System.Windows.Forms.GroupBox();
             this.robotNameLabel = new System.Windows.Forms.Label();
             this.robotModelLabel = new System.Windows.Forms.Label();
@@ -90,9 +86,10 @@ namespace MqttSender
             this.mqttPortInputF = new System.Windows.Forms.TextBox();
             this.mqttIpInputF = new System.Windows.Forms.TextBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.processCancelBtn = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.amrTabPage.SuspendLayout();
-            this.panel1.SuspendLayout();
+            this.taskListPanel.SuspendLayout();
             this.taskGroupBox.SuspendLayout();
             this.additionalDetailGroupBox.SuspendLayout();
             this.robotDetailGroupBox.SuspendLayout();
@@ -101,15 +98,15 @@ namespace MqttSender
             this.mqttBasicInfoGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
-            // publishMsgBtn
+            // validateBtn
             // 
-            this.publishMsgBtn.Location = new System.Drawing.Point(657, 408);
-            this.publishMsgBtn.Name = "publishMsgBtn";
-            this.publishMsgBtn.Size = new System.Drawing.Size(106, 21);
-            this.publishMsgBtn.TabIndex = 0;
-            this.publishMsgBtn.Text = "메시지 전송 시작";
-            this.publishMsgBtn.UseVisualStyleBackColor = true;
-            this.publishMsgBtn.Click += new System.EventHandler(this.publishMsgBtn_Click);
+            this.validateBtn.Location = new System.Drawing.Point(446, 408);
+            this.validateBtn.Name = "validateBtn";
+            this.validateBtn.Size = new System.Drawing.Size(92, 21);
+            this.validateBtn.TabIndex = 2;
+            this.validateBtn.Text = "입력 값 확인";
+            this.validateBtn.UseVisualStyleBackColor = true;
+            this.validateBtn.Click += new System.EventHandler(this.validateBtn_Click);
             // 
             // showExampleDataBtn
             // 
@@ -121,15 +118,15 @@ namespace MqttSender
             this.showExampleDataBtn.UseVisualStyleBackColor = true;
             this.showExampleDataBtn.Click += new System.EventHandler(this.showExampleDataBtn_Click);
             // 
-            // validateBtn
+            // publishMsgBtn
             // 
-            this.validateBtn.Location = new System.Drawing.Point(446, 408);
-            this.validateBtn.Name = "validateBtn";
-            this.validateBtn.Size = new System.Drawing.Size(92, 21);
-            this.validateBtn.TabIndex = 2;
-            this.validateBtn.Text = "입력 값 확인";
-            this.validateBtn.UseVisualStyleBackColor = true;
-            this.validateBtn.Click += new System.EventHandler(this.validateBtn_Click);
+            this.publishMsgBtn.Location = new System.Drawing.Point(657, 408);
+            this.publishMsgBtn.Name = "publishMsgBtn";
+            this.publishMsgBtn.Size = new System.Drawing.Size(106, 21);
+            this.publishMsgBtn.TabIndex = 0;
+            this.publishMsgBtn.Text = "메시지 전송 시작";
+            this.publishMsgBtn.UseVisualStyleBackColor = true;
+            this.publishMsgBtn.Click += new System.EventHandler(this.publishMsgBtn_Click);
             // 
             // tabControl1
             // 
@@ -143,7 +140,7 @@ namespace MqttSender
             // 
             // amrTabPage
             // 
-            this.amrTabPage.Controls.Add(this.panel1);
+            this.amrTabPage.Controls.Add(this.taskListPanel);
             this.amrTabPage.Controls.Add(this.taskGroupBox);
             this.amrTabPage.Controls.Add(this.additionalDetailGroupBox);
             this.amrTabPage.Controls.Add(this.robotDetailGroupBox);
@@ -156,25 +153,30 @@ namespace MqttSender
             this.amrTabPage.UseVisualStyleBackColor = true;
             this.amrTabPage.Click += new System.EventHandler(this.tabPage1_Click);
             // 
-            // panel1
+            // taskListPanel
             // 
-            this.panel1.Controls.Add(this.listView1);
-            this.panel1.Controls.Add(this.RemoveTaskBtn);
-            this.panel1.Controls.Add(this.seeTaskDetailBtn);
-            this.panel1.Location = new System.Drawing.Point(337, 159);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(410, 188);
-            this.panel1.TabIndex = 21;
+            this.taskListPanel.Controls.Add(this.taskListView);
+            this.taskListPanel.Controls.Add(this.RemoveTaskBtn);
+            this.taskListPanel.Controls.Add(this.seeTaskDetailBtn);
+            this.taskListView.Columns.Add("Task ID", 75);
+            this.taskListView.Columns.Add("Status", 75);
+            this.taskListView.Columns.Add("Origin", 75);
+            this.taskListView.Columns.Add("Destination", 75);
+            this.taskListView.Columns.Add("Estimated End Time", 150);
+            this.taskListPanel.Location = new System.Drawing.Point(337, 159);
+            this.taskListPanel.Name = "taskListPanel";
+            this.taskListPanel.Size = new System.Drawing.Size(410, 188);
+            this.taskListPanel.TabIndex = 21;
             // 
-            // listView1
+            // taskListView
             // 
-            this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(15, 17);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(295, 154);
-            this.listView1.TabIndex = 3;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
+            this.taskListView.HideSelection = false;
+            this.taskListView.Location = new System.Drawing.Point(15, 17);
+            this.taskListView.Name = "taskListView";
+            this.taskListView.Size = new System.Drawing.Size(295, 154);
+            this.taskListView.TabIndex = 3;
+            this.taskListView.UseCompatibleStateImageBehavior = false;
+            this.taskListView.View = System.Windows.Forms.View.Details;
             // 
             // RemoveTaskBtn
             // 
@@ -184,6 +186,7 @@ namespace MqttSender
             this.RemoveTaskBtn.TabIndex = 2;
             this.RemoveTaskBtn.Text = "제거";
             this.RemoveTaskBtn.UseVisualStyleBackColor = true;
+            this.RemoveTaskBtn.Click += new System.EventHandler(this.RemoveTaskBtn_Click);
             // 
             // seeTaskDetailBtn
             // 
@@ -236,7 +239,6 @@ namespace MqttSender
             this.workTimeLabel.Size = new System.Drawing.Size(53, 12);
             this.workTimeLabel.TabIndex = 19;
             this.workTimeLabel.Text = "작업시간";
-            this.workTimeLabel.Click += new System.EventHandler(this.label4_Click);
             // 
             // moveTimeLabel
             // 
@@ -246,7 +248,6 @@ namespace MqttSender
             this.moveTimeLabel.Size = new System.Drawing.Size(53, 12);
             this.moveTimeLabel.TabIndex = 18;
             this.moveTimeLabel.Text = "이동시간";
-            this.moveTimeLabel.Click += new System.EventHandler(this.label3_Click);
             // 
             // destLocInputField
             // 
@@ -263,7 +264,6 @@ namespace MqttSender
             this.endLocLabel.Size = new System.Drawing.Size(53, 12);
             this.endLocLabel.TabIndex = 16;
             this.endLocLabel.Text = "목표위치";
-            this.endLocLabel.Click += new System.EventHandler(this.label2_Click);
             // 
             // startLocInputField
             // 
@@ -289,7 +289,6 @@ namespace MqttSender
             this.taskIdLabel.Size = new System.Drawing.Size(44, 12);
             this.taskIdLabel.TabIndex = 13;
             this.taskIdLabel.Text = "작업 ID";
-            this.taskIdLabel.Click += new System.EventHandler(this.taskIdLabel_Click);
             // 
             // taskIdInputField
             // 
@@ -310,16 +309,12 @@ namespace MqttSender
             // 
             // additionalDetailGroupBox
             // 
-            this.additionalDetailGroupBox.Controls.Add(this.autoSendDurationInputF);
-            this.additionalDetailGroupBox.Controls.Add(this.autoRunTimeLabel);
             this.additionalDetailGroupBox.Controls.Add(this.msgDelayTimeLabel);
             this.additionalDetailGroupBox.Controls.Add(this.msgDelayTimeInputF);
             this.additionalDetailGroupBox.Controls.Add(this.msgEventTypeLabel);
-            this.additionalDetailGroupBox.Controls.Add(this.dynamicLocVariantLabel);
-            this.additionalDetailGroupBox.Controls.Add(this.msgPerSecGenerateLabel);
+            this.additionalDetailGroupBox.Controls.Add(this.msgTickPerDelay);
             this.additionalDetailGroupBox.Controls.Add(this.eventTypeInputF);
-            this.additionalDetailGroupBox.Controls.Add(this.locationVariantInputF);
-            this.additionalDetailGroupBox.Controls.Add(this.msgPerSecondInputF);
+            this.additionalDetailGroupBox.Controls.Add(this.tickPerDelayTime);
             this.additionalDetailGroupBox.Location = new System.Drawing.Point(17, 159);
             this.additionalDetailGroupBox.Name = "additionalDetailGroupBox";
             this.additionalDetailGroupBox.Size = new System.Drawing.Size(314, 188);
@@ -327,23 +322,6 @@ namespace MqttSender
             this.additionalDetailGroupBox.TabStop = false;
             this.additionalDetailGroupBox.Text = "부가 기능 입력";
             this.additionalDetailGroupBox.Enter += new System.EventHandler(this.groupBox4_Enter);
-            // 
-            // autoSendDurationInputF
-            // 
-            this.autoSendDurationInputF.Location = new System.Drawing.Point(163, 125);
-            this.autoSendDurationInputF.Name = "autoSendDurationInputF";
-            this.autoSendDurationInputF.Size = new System.Drawing.Size(111, 21);
-            this.autoSendDurationInputF.TabIndex = 19;
-            // 
-            // autoRunTimeLabel
-            // 
-            this.autoRunTimeLabel.AutoSize = true;
-            this.autoRunTimeLabel.Location = new System.Drawing.Point(6, 128);
-            this.autoRunTimeLabel.Name = "autoRunTimeLabel";
-            this.autoRunTimeLabel.Size = new System.Drawing.Size(83, 12);
-            this.autoRunTimeLabel.TabIndex = 18;
-            this.autoRunTimeLabel.Text = "실행 주기 (초)";
-            this.autoRunTimeLabel.Click += new System.EventHandler(this.label20_Click);
             // 
             // msgDelayTimeLabel
             // 
@@ -370,24 +348,14 @@ namespace MqttSender
             this.msgEventTypeLabel.TabIndex = 14;
             this.msgEventTypeLabel.Text = "이벤트 유형";
             // 
-            // dynamicLocVariantLabel
+            // msgTickPerDelay
             // 
-            this.dynamicLocVariantLabel.AutoSize = true;
-            this.dynamicLocVariantLabel.Location = new System.Drawing.Point(6, 74);
-            this.dynamicLocVariantLabel.Name = "dynamicLocVariantLabel";
-            this.dynamicLocVariantLabel.Size = new System.Drawing.Size(101, 12);
-            this.dynamicLocVariantLabel.TabIndex = 13;
-            this.dynamicLocVariantLabel.Text = "동적 위치 변동 값";
-            this.dynamicLocVariantLabel.Click += new System.EventHandler(this.dynamicLocVariantLabel_Click);
-            // 
-            // msgPerSecGenerateLabel
-            // 
-            this.msgPerSecGenerateLabel.AutoSize = true;
-            this.msgPerSecGenerateLabel.Location = new System.Drawing.Point(6, 20);
-            this.msgPerSecGenerateLabel.Name = "msgPerSecGenerateLabel";
-            this.msgPerSecGenerateLabel.Size = new System.Drawing.Size(151, 12);
-            this.msgPerSecGenerateLabel.TabIndex = 12;
-            this.msgPerSecGenerateLabel.Text = "초당 메시지 생성 개수 (초)";
+            this.msgTickPerDelay.AutoSize = true;
+            this.msgTickPerDelay.Location = new System.Drawing.Point(6, 20);
+            this.msgTickPerDelay.Name = "msgTickPerDelay";
+            this.msgTickPerDelay.Size = new System.Drawing.Size(85, 12);
+            this.msgTickPerDelay.TabIndex = 12;
+            this.msgTickPerDelay.Text = "딜레이당 틱 수";
             // 
             // eventTypeInputF
             // 
@@ -396,19 +364,12 @@ namespace MqttSender
             this.eventTypeInputF.Size = new System.Drawing.Size(111, 21);
             this.eventTypeInputF.TabIndex = 11;
             // 
-            // locationVariantInputF
+            // tickPerDelayTime
             // 
-            this.locationVariantInputF.Location = new System.Drawing.Point(163, 71);
-            this.locationVariantInputF.Name = "locationVariantInputF";
-            this.locationVariantInputF.Size = new System.Drawing.Size(111, 21);
-            this.locationVariantInputF.TabIndex = 10;
-            // 
-            // msgPerSecondInputF
-            // 
-            this.msgPerSecondInputF.Location = new System.Drawing.Point(163, 17);
-            this.msgPerSecondInputF.Name = "msgPerSecondInputF";
-            this.msgPerSecondInputF.Size = new System.Drawing.Size(111, 21);
-            this.msgPerSecondInputF.TabIndex = 9;
+            this.tickPerDelayTime.Location = new System.Drawing.Point(163, 17);
+            this.tickPerDelayTime.Name = "tickPerDelayTime";
+            this.tickPerDelayTime.Size = new System.Drawing.Size(111, 21);
+            this.tickPerDelayTime.TabIndex = 9;
             // 
             // robotDetailGroupBox
             // 
@@ -662,11 +623,22 @@ namespace MqttSender
             this.progressBar1.Size = new System.Drawing.Size(218, 21);
             this.progressBar1.TabIndex = 5;
             // 
+            // processCancelBtn
+            // 
+            this.processCancelBtn.Location = new System.Drawing.Point(284, 406);
+            this.processCancelBtn.Name = "processCancelBtn";
+            this.processCancelBtn.Size = new System.Drawing.Size(69, 22);
+            this.processCancelBtn.TabIndex = 6;
+            this.processCancelBtn.Text = "중단";
+            this.processCancelBtn.UseVisualStyleBackColor = true;
+            this.processCancelBtn.Click += new System.EventHandler(this.cancelProcessBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.processCancelBtn);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.validateBtn);
@@ -678,7 +650,7 @@ namespace MqttSender
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
             this.amrTabPage.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
+            this.taskListPanel.ResumeLayout(false);
             this.taskGroupBox.ResumeLayout(false);
             this.taskGroupBox.PerformLayout();
             this.additionalDetailGroupBox.ResumeLayout(false);
@@ -693,9 +665,11 @@ namespace MqttSender
             this.ResumeLayout(false);
         }
 
+        private System.Windows.Forms.Button processCancelBtn;
+
         private System.Windows.Forms.TextBox moveTimeInputField;
         private System.Windows.Forms.TextBox workTimeInputField;
-        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.ListView taskListView;
 
         private System.Windows.Forms.TextBox taskIdInputField;
 
@@ -708,7 +682,7 @@ namespace MqttSender
         private System.Windows.Forms.TextBox destLocInputField;
 
         private System.Windows.Forms.GroupBox taskGroupBox;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel taskListPanel;
         private System.Windows.Forms.Button seeTaskDetailBtn;
         private System.Windows.Forms.Button RemoveTaskBtn;
         private System.Windows.Forms.Button addTaskBtn;
@@ -735,11 +709,9 @@ namespace MqttSender
         private System.Windows.Forms.TextBox robotSidInputField;
         private System.Windows.Forms.GroupBox additionalDetailGroupBox;
         private System.Windows.Forms.Label msgEventTypeLabel;
-        private System.Windows.Forms.Label dynamicLocVariantLabel;
-        private System.Windows.Forms.Label msgPerSecGenerateLabel;
+        private System.Windows.Forms.Label msgTickPerDelay;
         private System.Windows.Forms.TextBox eventTypeInputF;
-        private System.Windows.Forms.TextBox locationVariantInputF;
-        private System.Windows.Forms.TextBox msgPerSecondInputF;
+        private System.Windows.Forms.TextBox tickPerDelayTime;
         private System.Windows.Forms.GroupBox mqttBasicInfoGroupBox;
         private System.Windows.Forms.Label mqttTopicLabel;
         private System.Windows.Forms.Label mqttBrokerPortLabel;
@@ -756,8 +728,6 @@ namespace MqttSender
         private System.Windows.Forms.TextBox mqttUserNameInputF;
         private System.Windows.Forms.Label msgDelayTimeLabel;
         private System.Windows.Forms.TextBox msgDelayTimeInputF;
-        private System.Windows.Forms.Label autoRunTimeLabel;
-        private System.Windows.Forms.TextBox autoSendDurationInputF;
         private System.Windows.Forms.TextBox mqttClientIdF;
         private System.Windows.Forms.Label mqttClientNameLabel;
     }
