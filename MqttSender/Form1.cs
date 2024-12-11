@@ -18,8 +18,8 @@ namespace MqttSender
     {
         private const string MQTT_DEFAULT_IP = "localhost";
         private const string MQTT_DEFAULT_PORT = "1884";
-        private const string MQTT_DEFAULT_TOPIC = "vss-topic-test";
-        private const string MQTT_DEFAULT_CLIENT_ID = "test-client";
+        private const string MQTT_DEFAULT_TOPIC = "vss-topic-external";
+        private const string MQTT_DEFAULT_CLIENT_ID = "test-client-generator";
         private const int DEFAULT_MSG_COUNT_PER_SECOND = 5;
         private const int DEFAULT_MSG_DELAY_TIME = 1;
         private const int DEFAULT_LOCATION_VARIANT_VALUE = 5;
@@ -27,7 +27,16 @@ namespace MqttSender
         private const int DEFAULT_AUTORUN_TIME = 60; //in seconds
         private const int DEFAUKT_Z_VALUE = 0;
         private const string DEFAULT_ROBOT_SIDE_VALUE = "TEST_SID";
-        private RobotDataGenerator RobotDataGenerator = new RobotDataGenerator();
+        private RobotDataGenerator RobotDataGenerator;
+        private TaskHandler TaskHandler = new TaskHandler();
+        private const string DEFAULT_TASK_TYPE = "GENERATED_TASK";
+        private const string DEFAULT_TASK_STATUS = "pending";
+        private const int DEFAULT_WORKING_TIME = 5;
+        private const int DEFAULT_MOVING_TIME = 5;
+        private const string DEFAULT_TASK_ID = "task1";
+        private const string DEFAILT_START_LOC = "255, 255, 0";
+        private const string DEFAILT_DEST_LOC = "255, 255, 0";
+        private readonly object GeneratorLock = new object();
         
         private void InitializeFields()
         {
@@ -35,18 +44,21 @@ namespace MqttSender
             mqttPortInputF.Text = MQTT_DEFAULT_PORT;
             mqttTopicInputF.Text = MQTT_DEFAULT_TOPIC;
             mqttClientIdF.Text = MQTT_DEFAULT_CLIENT_ID;
-            msgPerSecondInputF.Text = DEFAULT_MSG_COUNT_PER_SECOND.ToString();
+            tickPerDelayTime.Text = DEFAULT_MSG_COUNT_PER_SECOND.ToString();
             msgDelayTimeInputF.Text = DEFAULT_MSG_DELAY_TIME.ToString();
-            locationVariantInputF.Text = DEFAULT_LOCATION_VARIANT_VALUE.ToString();
             eventTypeInputF.Text = DEFAULT_EVENT_TYPE;
-            autoSendDurationInputF.Text = DEFAULT_AUTORUN_TIME.ToString();
             robotSidInputField.Text = DEFAULT_ROBOT_SIDE_VALUE;
-            msgPerSecondInputF.KeyPress += inputF_AllowIntegerOnly_TextChanged;
+            workTimeInputField.Text = DEFAULT_WORKING_TIME.ToString();
+            moveTimeInputField.Text = DEFAULT_MOVING_TIME.ToString();
+            startLocInputField.Text = DEFAILT_START_LOC;
+            destLocInputField.Text = DEFAILT_DEST_LOC;
+            taskIdInputField.Text = DEFAULT_TASK_ID;
+            tickPerDelayTime.KeyPress += inputF_AllowIntegerOnly_TextChanged;
             msgDelayTimeInputF.KeyPress += inputF_AllowIntegerOnly_TextChanged;
-            locationVariantInputF.KeyPress += inputF_AllowIntegerOnly_TextChanged;
-            msgPerSecondInputF.KeyPress += inputF_AllowIntegerOnly_TextChanged;
-            autoSendDurationInputF.KeyPress += inputF_AllowIntegerOnly_TextChanged;
+            tickPerDelayTime.KeyPress += inputF_AllowIntegerOnly_TextChanged;
             mqttPortInputF.KeyPress += inputF_AllowIntegerOnly_TextChanged;
+            moveTimeInputField.KeyPress += inputF_AllowIntegerOnly_TextChanged;
+            workTimeInputField.KeyPress += inputF_AllowIntegerOnly_TextChanged;
         }
 
         public Form1()
@@ -93,11 +105,10 @@ namespace MqttSender
                     robotSidInputField.Text,
                     robotModelInputField.Text,
                     robotNameInputField.Text,
-                    parseStringToInt(msgPerSecondInputF.Text),
+                    parseStringToInt(tickPerDelayTime.Text),
                     parseStringToInt(msgDelayTimeInputF.Text),
-                    parseStringToInt(locationVariantInputF.Text),
                     eventTypeInputF.Text,
-                    parseStringToInt(autoSendDurationInputF.Text)
+                    TaskHandler.getTaskQueue()
                 );
 
                 bool isValid = inputObject.IsValidInputs();
@@ -189,19 +200,20 @@ namespace MqttSender
 
         private void showExampleDataBtn_Click(object sender, EventArgs e)
         {
+            TaskHandler.EnqueueAll();
+            
             List<AMRRobotInputObject> amrRobotInputObjects = new List<AMRRobotInputObject>();
             AMRRobotInputObject amrRobotInputObject = createRobotInputObjectInstance();
             
             if (amrRobotInputObject != null)
             {
-
                 amrRobotInputObjects.Add(amrRobotInputObject);
 
                 // Generate JSON data from the list of AMRRobotInputObject
-                RobotDataGenerator robotDataGenerator = new RobotDataGenerator();
-                string jsonData = robotDataGenerator.GenerateRobotDataJson(amrRobotInputObjects);
+                RobotDataGenerator = new RobotDataGenerator(TaskHandler.getTaskQueue());
+                string jsonData = RobotDataGenerator.GenerateRobotDataJson(amrRobotInputObjects, 0);
                 
-                MessageBox.Show(jsonData, "Generated Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(jsonData, "데이터 예시", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
@@ -210,23 +222,104 @@ namespace MqttSender
             }
         }
         
-        private void publishMsgBtn_Click(object sender, EventArgs e)
+        private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        
+        private async void publishMsgBtn_Click(object sender, EventArgs e)
         {
             
+            cancellationTokenSource = new CancellationTokenSource(); // Reset or create a new CancellationTokenSource
+            
+            // Validate necessary inputs
+            int tickPerDelay = int.Parse(tickPerDelayTime.Text); // # of ticks per second
+            int msgDelayTimeSeconds = int.Parse(msgDelayTimeInputF.Text); // seconds
+
+            TaskHandler.EnqueueAll();
+
+            List<AMRRobotInputObject> amrRobotInputObjects = new List<AMRRobotInputObject>();
+            
+            AMRRobotInputObject amrRobotInputObject = createRobotInputObjectInstance();
+            int currentTick = 0;
+            int passedTimeMilli = 0;
+            int totalSeconds = TaskHandler.getTotalTaskDurationInSeconds();
+            int totalTicks = (int)((float)totalSeconds / msgDelayTimeSeconds) * tickPerDelay;
+            int delayTimeMilli = (int)(1000.0 / tickPerDelay); // Convert ticks per second to milliseconds
+            
+            Console.WriteLine($"totalseconds= {totalSeconds}, totalTicks={totalTicks}, delayTimeMilli={delayTimeMilli}, passedTimeMilli={passedTimeMilli}");
+
+            if (amrRobotInputObject != null)
+            {
+                amrRobotInputObjects.Add(amrRobotInputObject);
+
+                // Generate JSON data
+                RobotDataGenerator = new RobotDataGenerator(TaskHandler.getTaskQueue());
+                MqttPublisher publisher = new MqttPublisher();
+                
+                progressBar1.Minimum = 0;
+                progressBar1.Maximum = totalTicks;
+                progressBar1.Value = 0;
+
+                try
+                {
+                    // Connect to the MQTT broker
+                    await publisher.ConnectAsync(mqttIpInputF.Text, int.Parse(mqttPortInputF.Text), mqttClientIdF.Text);
+
+                    // Increment tick and send messages
+                    while (currentTick <= totalTicks)
+                    {
+                        
+                        if (cancellationTokenSource.Token.IsCancellationRequested)
+                        {
+                            MessageBox.Show("Loop cancelled by user", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            break;
+                        }
+                        
+                        //Generate JSON data
+                        string jsonData = RobotDataGenerator.GenerateRobotDataJson(amrRobotInputObjects, delayTimeMilli);
+                        if (jsonData == null)
+                        {
+                            break;
+                        }
+                        //Console.WriteLine(jsonData);
+                        // Send the message asynchronously
+                        await publisher.SendMessageAsync(mqttTopicInputF.Text, jsonData);
+
+                        // Update the progress bar based on delay time increment
+                        progressBar1.Value = currentTick;
+                        progressBar1.Refresh();
+
+                        await Task.Delay(delayTimeMilli); // Delay between ticks
+                        
+                        //calculate passed time based on the ticks and delay time
+                        passedTimeMilli += delayTimeMilli;
+                        currentTick++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"오류 발생: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    // Disconnect from the MQTT broker
+                    await publisher.DisconnectAsync();
+                    MessageBox.Show("메시지 전송 완료", "성공!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    progressBar1.Value = 0;
+                }
+                
+            }
+            else
+            {
+                // Notify user of input error
+                MessageBox.Show("입력 값 오류.", "실패", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
-        
 
-        private void robotSidInputField_TextChanged(object sender, EventArgs e)
-        {
+       private void robotSidInputField_TextChanged(object sender, EventArgs e)
+       {
 
-        }
+       }
 
-        private void label20_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void groupBox4_Enter(object sender, EventArgs e)
+       private void groupBox4_Enter(object sender, EventArgs e)
         {
 
         }
@@ -298,26 +391,6 @@ namespace MqttSender
             }
         }
         
-        private void dynamicLocVariantLabel_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void taskIdLabel_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-        }
-        
         private void DisableForm()
         {
             this.Enabled = false; // Disables the entire form
@@ -331,16 +404,86 @@ namespace MqttSender
             progressBar1.Value = 0;
         }
 
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        private Position parsePosition(string position)
         {
-            throw new System.NotImplementedException();
+            var parts = position.Replace(" ", "").Split(',');
+            
+            if(parts.Length != 3)
+            {
+                MessageBox.Show(position, "좌표 오류", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                throw new ArgumentException("Invalid position format: must contain exactly three values separated by commas.");
+            }
+            
+            return new Position
+            {
+                X = int.Parse(parts[0].Trim()),
+                Y = int.Parse(parts[1].Trim()),
+                Z = int.Parse(parts[2].Trim())
+            };
         }
-
+        
         private void addTaskBtn_Click(object sender, EventArgs e)
         {
             RobotTask task = new RobotTask();
             string taskId = taskIdInputField.Text;
-            throw new System.NotImplementedException();
+            int workTime = int.Parse(workTimeInputField.Text); //working time
+            int moveTime = int.Parse(moveTimeInputField.Text); //moving time
+            Position startPos = parsePosition(startLocInputField.Text);
+            Position destPos = parsePosition(destLocInputField.Text);
+            
+            task.TaskId = taskId;
+            task.Origin = startPos;
+            task.TargetLocation = destPos;
+            task.Type = DEFAULT_TASK_TYPE;
+            task.EstimatedEndTime = DateTime.Now
+                .AddSeconds(workTime)
+                .AddSeconds(moveTime);
+            task.workTimeSeconds = workTime;
+            task.moveTimeSeconds = moveTime;
+            
+            if (TaskHandler.AddTask(task))
+            {
+                ListViewItem listViewItem = new ListViewItem(task.TaskId);
+                listViewItem.SubItems.Add(DEFAULT_TASK_STATUS);
+                listViewItem.SubItems.Add(task.Origin.ToString());
+                listViewItem.SubItems.Add(task.TargetLocation.ToString());
+                listViewItem.SubItems.Add(task.EstimatedEndTime.ToString());
+                taskListView.Items.Add(listViewItem);   
+            }
+            else
+            {
+                MessageBox.Show("동일한 task Id가 이미 존재합니다.");
+            }
+        }
+
+        private void RemoveTaskBtn_Click(object sender, EventArgs e)
+        {
+            if (taskListView.SelectedItems.Count > 0)
+            {
+                foreach (ListViewItem selectedItem in taskListView.SelectedItems)
+                {
+                    string taskId = selectedItem.SubItems[0].Text; // Retrieve task ID assuming it's at index 1
+                    Console.WriteLine(taskId);
+                    bool removed = TaskHandler.RemoveTask(taskId);
+                    if (removed)
+                    {
+                        taskListView.Items.Remove(selectedItem);   
+                    }
+                }
+            }
+        }
+
+        private void taskIdInputField_TextChanged(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void cancelProcessBtn_Click(object sender, EventArgs e)
+        {
+            if (cancellationTokenSource != null)
+            {
+                cancellationTokenSource.Cancel();
+            }
         }
     }
 }

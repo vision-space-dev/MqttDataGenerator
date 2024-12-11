@@ -67,7 +67,7 @@ namespace MqttSender.service
                 .Build();
 
             await _mqttClient.PublishAsync(message);
-            Console.WriteLine($"Message published to topic {topic}: {payload}");
+            //Console.WriteLine($"Message published to topic {topic}: {payload}");
         }
         
         public async Task DisconnectAsync()

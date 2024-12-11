@@ -6,18 +6,19 @@ namespace MqttSender.model
     public class AMRRobotInputObject
     {
         public AMRRobotInputObject(string robotSid, string robotModelName, string robotName,
-            int messagesPerSeconds, int messageDelaySeconds, int locationVariantValue,
-            string eventType, int runTimeSeconds)
+            int messagesPerSeconds, int messageDelaySeconds,
+            string eventType, Queue<RobotTask> tasks)
         {
             this.RobotSid = robotSid;
             this.RobotModelName = robotModelName;
             this.RobotName = robotName;
             this.MessagesPerSeconds = messagesPerSeconds;
             this.MessageDelaySeconds = messageDelaySeconds;
-            this.LocationVariantValue = locationVariantValue;
             this.EventType = eventType;
-            this.RunTimeSeconds = runTimeSeconds;
+            this.RobotTasks = tasks;
         }
+        
+        public Queue<RobotTask> RobotTasks { get; }
         
         public string RobotSid { get; }
         public string RobotModelName { get; }
