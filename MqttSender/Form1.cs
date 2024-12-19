@@ -280,7 +280,6 @@ namespace MqttSender
                             break;
                         }
                         //Console.WriteLine(jsonData);
-                        // Send the message asynchronously
                         await publisher.SendMessageAsync(mqttTopicInputF.Text, jsonData);
 
                         // Update the progress bar based on delay time increment

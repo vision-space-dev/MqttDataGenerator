@@ -28,9 +28,13 @@ namespace MqttSender.service
 
             if (withTls)
             {
-                optionsBuilder.WithTls();
+                // Correctly configure TLS options
+                optionsBuilder.WithTlsOptions(tlsOptions =>
+                {
+                    tlsOptions.UseTls(); // Enable TLS
+                });
             }
-            
+
             if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
             {
                 optionsBuilder.WithCredentials(username, password);

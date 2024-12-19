@@ -118,7 +118,8 @@ namespace MqttSender.generator
                     int currentTaskTotalTimeMilli = (currentTask.moveTimeSeconds + currentTask.workTimeSeconds) * 1000;
                     Console.WriteLine($"currentTaskTotalTimeMilli= {currentTaskTotalTimeMilli}, " +
                                       $"delayTimeMilli = {delayTimeMilli}, currentTaskTimeInMilli = {currentTaskTimeInMilli}, " +
-                                      $"currentTaskTotalTimeMilli={currentTaskTotalTimeMilli}, robotTaskQueue.Count={robotTaskQueue.Count},");
+                                      $"currentTaskTotalTimeMilli={currentTaskTotalTimeMilli}, robotTaskQueue.Count={robotTaskQueue.Count}," +
+                                      $" currentTask={currentTask.TaskId}");
                     
                     //Next task
                     //if current tick matches the currentTask's moving plus working time, then dequeue to the next task
@@ -135,10 +136,10 @@ namespace MqttSender.generator
 
                         if (robotTaskQueue.Count > 0)
                         {
+                            currentTaskTimeInMilli = 0;
                             position = GeneratePositionMoving(currentTask, currentTaskTimeInMilli);
                             currentTask = robotTaskQueue.Dequeue();
                             currentTask.Status = "in_progress";
-                            currentTaskTimeInMilli = 0;
                             Console.WriteLine($"Taking the next task. Generated working position: {position.ToString()}");
                         }
                         else
