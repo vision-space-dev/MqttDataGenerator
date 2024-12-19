@@ -485,5 +485,21 @@ namespace MqttSender
                 cancellationTokenSource.Cancel();
             }
         }
+
+        private void addRobotBtn_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void removeRobotBtn_Click(object sender, EventArgs e)
+        {
+            throw new System.NotImplementedException();
+        }
+        
+        private void robotListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            throw new System.NotImplementedException();
+        }
+        
     }
 }
