@@ -391,17 +391,17 @@ namespace MqttSender
             // robotListView
             // 
             this.robotListView.HideSelection = false;
-            this.robotListView.Location = new System.Drawing.Point(213, 19);
+            this.robotListView.Location = new System.Drawing.Point(339, 19);
             this.robotListView.MultiSelect = false;
             this.robotListView.Name = "robotListView";
-            this.robotListView.Size = new System.Drawing.Size(289, 158);
+            this.robotListView.Size = new System.Drawing.Size(260, 183);
             this.robotListView.TabIndex = 18;
             this.robotListView.UseCompatibleStateImageBehavior = false;
             this.robotListView.SelectedIndexChanged += new System.EventHandler(this.robotListView_SelectedIndexChanged);
             // 
             // removeRobotBtn
             // 
-            this.removeRobotBtn.Location = new System.Drawing.Point(32, 139);
+            this.removeRobotBtn.Location = new System.Drawing.Point(195, 46);
             this.removeRobotBtn.Name = "removeRobotBtn";
             this.removeRobotBtn.Size = new System.Drawing.Size(140, 23);
             this.removeRobotBtn.TabIndex = 17;
@@ -411,7 +411,7 @@ namespace MqttSender
             // 
             // addRobotBtn
             // 
-            this.addRobotBtn.Location = new System.Drawing.Point(32, 110);
+            this.addRobotBtn.Location = new System.Drawing.Point(195, 19);
             this.addRobotBtn.Name = "addRobotBtn";
             this.addRobotBtn.Size = new System.Drawing.Size(140, 23);
             this.addRobotBtn.TabIndex = 15;
