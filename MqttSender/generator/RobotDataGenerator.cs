@@ -29,6 +29,7 @@ namespace MqttSender.generator
                 this.robotTaskQueue = robotTaskQueue;
                 this.tasks = robotTaskQueue.ToList();
                 this.currentTask = this.robotTaskQueue.Dequeue();
+                Console.WriteLine("Deuqueu the first task. Remaining tasks count=" + robotTaskQueue.Count);
                 this.currentTask.Status = "in_progress";
             }
         }
@@ -41,7 +42,7 @@ namespace MqttSender.generator
             // Validate inputs
             if (task.moveTimeSeconds < 0 || currentTaskMillis > totalMoveTimeMilli)
             {
-                throw new ArgumentException("Invalid moving time or current tick.");
+                throw new ArgumentException("Invalid moving time or current tick. currentTaskMillis=" + currentTaskMillis + ". totalMoveTimeMilli= " + totalMoveTimeMilli);
             }
 
             // Compute the fractional time progressed
@@ -140,7 +141,7 @@ namespace MqttSender.generator
                             position = GeneratePositionMoving(currentTask, currentTaskTimeInMilli);
                             currentTask = robotTaskQueue.Dequeue();
                             currentTask.Status = "in_progress";
-                            Console.WriteLine($"Taking the next task. Generated working position: {position.ToString()}");
+                            Console.WriteLine($"Taking the next task. Generated moving position: {position.ToString()}");
                         }
                         else
                         {
@@ -148,17 +149,19 @@ namespace MqttSender.generator
                             return null;
                         }
                     }
-                    //when working
-                    else if (currentTaskTimeInMilli >= currentTask.moveTimeSeconds * 1000 && currentTaskTimeInMilli < currentTaskTotalTimeMilli)
-                    {
-                        position = GeneratePositionWorking(currentTask.TargetLocation);
-                        Console.WriteLine($"Generated working position: {position.ToString()}");
-                    }
                     //when moving
                     else if (currentTaskTimeInMilli < currentTask.moveTimeSeconds * 1000)
                     {
+                        Console.WriteLine("Moving position");
                         position = GeneratePositionMoving(currentTask, currentTaskTimeInMilli);
                         Console.WriteLine($"Generated moving position: {position.ToString()}");
+                    }
+                    //when working
+                    else if (currentTaskTimeInMilli >= currentTask.workTimeSeconds * 1000 && currentTaskTimeInMilli < currentTaskTotalTimeMilli)
+                    {
+                        Console.WriteLine("Working position");
+                        position = GeneratePositionWorking(currentTask.TargetLocation);
+                        Console.WriteLine($"Generated working position: {position.ToString()}");
                     }
                     else
                     {

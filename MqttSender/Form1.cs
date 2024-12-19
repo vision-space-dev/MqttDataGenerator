@@ -220,6 +220,7 @@ namespace MqttSender
                 // If the object was not created (return null), notify the user
                 MessageBox.Show("입력 값 오류.", "실패", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            TaskHandler.DequeueAllTask();
         }
         
         private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
@@ -303,6 +304,7 @@ namespace MqttSender
                     await publisher.DisconnectAsync();
                     MessageBox.Show("메시지 전송 완료", "성공!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     progressBar1.Value = 0;
+                    TaskHandler.DequeueAllTask();
                 }
                 
             }
@@ -462,7 +464,6 @@ namespace MqttSender
                 foreach (ListViewItem selectedItem in taskListView.SelectedItems)
                 {
                     string taskId = selectedItem.SubItems[0].Text; // Retrieve task ID assuming it's at index 1
-                    Console.WriteLine(taskId);
                     bool removed = TaskHandler.RemoveTask(taskId);
                     if (removed)
                     {

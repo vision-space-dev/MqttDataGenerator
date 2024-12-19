@@ -39,6 +39,14 @@ namespace MqttSender.service
             taskQueue.Dequeue();
         }
 
+        public void DequeueAllTask()
+        {
+            while (taskQueue.Count > 0)
+            {
+                taskQueue.Dequeue();
+            }
+        }
+
         public Queue<RobotTask> getTaskQueue()
         {
             return taskQueue;
