@@ -172,6 +172,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="generator\RobotDataGenerator.cs" />
+    <Compile Include="manager\RobotManager.cs" />
     <Compile Include="model\*" />
     <Compile Include="model\jsonModel\*" />
     <Compile Include="Program.cs" />
@@ -203,6 +204,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="config\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

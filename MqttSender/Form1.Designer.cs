@@ -107,9 +107,9 @@ namespace MqttSender
             // 
             // validateBtn
             // 
-            this.validateBtn.Location = new System.Drawing.Point(511, 699);
+            this.validateBtn.Location = new System.Drawing.Point(596, 645);
             this.validateBtn.Name = "validateBtn";
-            this.validateBtn.Size = new System.Drawing.Size(130, 26);
+            this.validateBtn.Size = new System.Drawing.Size(152, 24);
             this.validateBtn.TabIndex = 2;
             this.validateBtn.Text = "Check user input";
             this.validateBtn.UseVisualStyleBackColor = true;
@@ -117,9 +117,9 @@ namespace MqttSender
             // 
             // showExampleDataBtn
             // 
-            this.showExampleDataBtn.Location = new System.Drawing.Point(647, 699);
+            this.showExampleDataBtn.Location = new System.Drawing.Point(755, 645);
             this.showExampleDataBtn.Name = "showExampleDataBtn";
-            this.showExampleDataBtn.Size = new System.Drawing.Size(118, 25);
+            this.showExampleDataBtn.Size = new System.Drawing.Size(138, 23);
             this.showExampleDataBtn.TabIndex = 1;
             this.showExampleDataBtn.Text = "Example data";
             this.showExampleDataBtn.UseVisualStyleBackColor = true;
@@ -127,9 +127,9 @@ namespace MqttSender
             // 
             // publishMsgBtn
             // 
-            this.publishMsgBtn.Location = new System.Drawing.Point(771, 699);
+            this.publishMsgBtn.Location = new System.Drawing.Point(899, 645);
             this.publishMsgBtn.Name = "publishMsgBtn";
-            this.publishMsgBtn.Size = new System.Drawing.Size(116, 25);
+            this.publishMsgBtn.Size = new System.Drawing.Size(135, 23);
             this.publishMsgBtn.TabIndex = 0;
             this.publishMsgBtn.Text = "Publish Message";
             this.publishMsgBtn.UseVisualStyleBackColor = true;
@@ -139,10 +139,10 @@ namespace MqttSender
             // 
             this.tabControl1.Controls.Add(this.amrTabPage);
             this.tabControl1.Controls.Add(this.mqttConnectTabPage);
-            this.tabControl1.Location = new System.Drawing.Point(10, 42);
+            this.tabControl1.Location = new System.Drawing.Point(12, 39);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(885, 432);
+            this.tabControl1.Size = new System.Drawing.Size(1032, 413);
             this.tabControl1.TabIndex = 4;
             // 
             // amrTabPage
@@ -154,7 +154,7 @@ namespace MqttSender
             this.amrTabPage.Location = new System.Drawing.Point(4, 22);
             this.amrTabPage.Name = "amrTabPage";
             this.amrTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.amrTabPage.Size = new System.Drawing.Size(877, 406);
+            this.amrTabPage.Size = new System.Drawing.Size(1024, 387);
             this.amrTabPage.TabIndex = 0;
             this.amrTabPage.Text = "AMR 기본 정보 입력";
             this.amrTabPage.UseVisualStyleBackColor = true;
@@ -166,16 +166,16 @@ namespace MqttSender
             this.taskListPanel.Controls.Add(this.taskListView);
             this.taskListPanel.Controls.Add(this.RemoveTaskBtn);
             this.taskListPanel.Controls.Add(this.seeTaskDetailBtn);
-            this.taskListPanel.Location = new System.Drawing.Point(287, 220);
+            this.taskListPanel.Location = new System.Drawing.Point(335, 203);
             this.taskListPanel.Name = "taskListPanel";
-            this.taskListPanel.Size = new System.Drawing.Size(584, 204);
+            this.taskListPanel.Size = new System.Drawing.Size(681, 188);
             this.taskListPanel.TabIndex = 21;
             // 
             // editTaskBtn
             // 
-            this.editTaskBtn.Location = new System.Drawing.Point(451, 51);
+            this.editTaskBtn.Location = new System.Drawing.Point(525, 39);
             this.editTaskBtn.Name = "editTaskBtn";
-            this.editTaskBtn.Size = new System.Drawing.Size(121, 28);
+            this.editTaskBtn.Size = new System.Drawing.Size(141, 26);
             this.editTaskBtn.TabIndex = 4;
             this.editTaskBtn.Text = "Edit Task";
             this.editTaskBtn.UseVisualStyleBackColor = true;
@@ -183,18 +183,18 @@ namespace MqttSender
             // taskListView
             // 
             this.taskListView.HideSelection = false;
-            this.taskListView.Location = new System.Drawing.Point(13, 18);
+            this.taskListView.Location = new System.Drawing.Point(17, 10);
             this.taskListView.Name = "taskListView";
-            this.taskListView.Size = new System.Drawing.Size(432, 167);
+            this.taskListView.Size = new System.Drawing.Size(503, 168);
             this.taskListView.TabIndex = 3;
             this.taskListView.UseCompatibleStateImageBehavior = false;
             this.taskListView.View = System.Windows.Forms.View.Details;
             // 
             // RemoveTaskBtn
             // 
-            this.RemoveTaskBtn.Location = new System.Drawing.Point(451, 157);
+            this.RemoveTaskBtn.Location = new System.Drawing.Point(525, 152);
             this.RemoveTaskBtn.Name = "RemoveTaskBtn";
-            this.RemoveTaskBtn.Size = new System.Drawing.Size(121, 28);
+            this.RemoveTaskBtn.Size = new System.Drawing.Size(141, 26);
             this.RemoveTaskBtn.TabIndex = 2;
             this.RemoveTaskBtn.Text = "Remove Task";
             this.RemoveTaskBtn.UseVisualStyleBackColor = true;
@@ -202,9 +202,9 @@ namespace MqttSender
             // 
             // seeTaskDetailBtn
             // 
-            this.seeTaskDetailBtn.Location = new System.Drawing.Point(451, 22);
+            this.seeTaskDetailBtn.Location = new System.Drawing.Point(525, 12);
             this.seeTaskDetailBtn.Name = "seeTaskDetailBtn";
-            this.seeTaskDetailBtn.Size = new System.Drawing.Size(121, 25);
+            this.seeTaskDetailBtn.Size = new System.Drawing.Size(141, 23);
             this.seeTaskDetailBtn.TabIndex = 1;
             this.seeTaskDetailBtn.Text = "See task detail";
             this.seeTaskDetailBtn.UseVisualStyleBackColor = true;
@@ -222,98 +222,98 @@ namespace MqttSender
             this.taskGroupBox.Controls.Add(this.taskIdLabel);
             this.taskGroupBox.Controls.Add(this.taskIdInputField);
             this.taskGroupBox.Controls.Add(this.addTaskBtn);
-            this.taskGroupBox.Location = new System.Drawing.Point(626, 6);
+            this.taskGroupBox.Location = new System.Drawing.Point(730, 6);
             this.taskGroupBox.Name = "taskGroupBox";
-            this.taskGroupBox.Size = new System.Drawing.Size(247, 208);
+            this.taskGroupBox.Size = new System.Drawing.Size(288, 192);
             this.taskGroupBox.TabIndex = 20;
             this.taskGroupBox.TabStop = false;
             this.taskGroupBox.Text = "Add Task";
             // 
             // workTimeInputField
             // 
-            this.workTimeInputField.Location = new System.Drawing.Point(131, 138);
+            this.workTimeInputField.Location = new System.Drawing.Point(153, 127);
             this.workTimeInputField.Name = "workTimeInputField";
-            this.workTimeInputField.Size = new System.Drawing.Size(96, 20);
+            this.workTimeInputField.Size = new System.Drawing.Size(111, 21);
             this.workTimeInputField.TabIndex = 21;
             // 
             // moveTimeInputField
             // 
-            this.moveTimeInputField.Location = new System.Drawing.Point(131, 112);
+            this.moveTimeInputField.Location = new System.Drawing.Point(153, 103);
             this.moveTimeInputField.Name = "moveTimeInputField";
-            this.moveTimeInputField.Size = new System.Drawing.Size(96, 20);
+            this.moveTimeInputField.Size = new System.Drawing.Size(111, 21);
             this.moveTimeInputField.TabIndex = 20;
             // 
             // workTimeLabel
             // 
             this.workTimeLabel.AutoSize = true;
-            this.workTimeLabel.Location = new System.Drawing.Point(13, 141);
+            this.workTimeLabel.Location = new System.Drawing.Point(15, 130);
             this.workTimeLabel.Name = "workTimeLabel";
-            this.workTimeLabel.Size = new System.Drawing.Size(46, 13);
+            this.workTimeLabel.Size = new System.Drawing.Size(53, 12);
             this.workTimeLabel.TabIndex = 19;
             this.workTimeLabel.Text = "Idle time";
             // 
             // moveTimeLabel
             // 
             this.moveTimeLabel.AutoSize = true;
-            this.moveTimeLabel.Location = new System.Drawing.Point(14, 115);
+            this.moveTimeLabel.Location = new System.Drawing.Point(16, 106);
             this.moveTimeLabel.Name = "moveTimeLabel";
-            this.moveTimeLabel.Size = new System.Drawing.Size(56, 13);
+            this.moveTimeLabel.Size = new System.Drawing.Size(64, 12);
             this.moveTimeLabel.TabIndex = 18;
             this.moveTimeLabel.Text = "Move time";
             // 
             // destLocInputField
             // 
-            this.destLocInputField.Location = new System.Drawing.Point(131, 86);
+            this.destLocInputField.Location = new System.Drawing.Point(153, 79);
             this.destLocInputField.Name = "destLocInputField";
-            this.destLocInputField.Size = new System.Drawing.Size(96, 20);
+            this.destLocInputField.Size = new System.Drawing.Size(111, 21);
             this.destLocInputField.TabIndex = 17;
             // 
             // endLocLabel
             // 
             this.endLocLabel.AutoSize = true;
-            this.endLocLabel.Location = new System.Drawing.Point(14, 89);
+            this.endLocLabel.Location = new System.Drawing.Point(16, 82);
             this.endLocLabel.Name = "endLocLabel";
-            this.endLocLabel.Size = new System.Drawing.Size(63, 13);
+            this.endLocLabel.Size = new System.Drawing.Size(70, 12);
             this.endLocLabel.TabIndex = 16;
             this.endLocLabel.Text = "Target Dest";
             // 
             // startLocInputField
             // 
-            this.startLocInputField.Location = new System.Drawing.Point(131, 60);
+            this.startLocInputField.Location = new System.Drawing.Point(153, 55);
             this.startLocInputField.Name = "startLocInputField";
-            this.startLocInputField.Size = new System.Drawing.Size(96, 20);
+            this.startLocInputField.Size = new System.Drawing.Size(111, 21);
             this.startLocInputField.TabIndex = 15;
             // 
             // startLocLabel
             // 
             this.startLocLabel.AutoSize = true;
-            this.startLocLabel.Location = new System.Drawing.Point(13, 63);
+            this.startLocLabel.Location = new System.Drawing.Point(15, 58);
             this.startLocLabel.Name = "startLocLabel";
-            this.startLocLabel.Size = new System.Drawing.Size(73, 13);
+            this.startLocLabel.Size = new System.Drawing.Size(82, 12);
             this.startLocLabel.TabIndex = 14;
             this.startLocLabel.Text = "Start Location";
             // 
             // taskIdLabel
             // 
             this.taskIdLabel.AutoSize = true;
-            this.taskIdLabel.Location = new System.Drawing.Point(14, 34);
+            this.taskIdLabel.Location = new System.Drawing.Point(16, 31);
             this.taskIdLabel.Name = "taskIdLabel";
-            this.taskIdLabel.Size = new System.Drawing.Size(45, 13);
+            this.taskIdLabel.Size = new System.Drawing.Size(48, 12);
             this.taskIdLabel.TabIndex = 13;
             this.taskIdLabel.Text = "Task ID";
             // 
             // taskIdInputField
             // 
-            this.taskIdInputField.Location = new System.Drawing.Point(131, 34);
+            this.taskIdInputField.Location = new System.Drawing.Point(153, 31);
             this.taskIdInputField.Name = "taskIdInputField";
-            this.taskIdInputField.Size = new System.Drawing.Size(96, 20);
+            this.taskIdInputField.Size = new System.Drawing.Size(111, 21);
             this.taskIdInputField.TabIndex = 10;
             // 
             // addTaskBtn
             // 
-            this.addTaskBtn.Location = new System.Drawing.Point(170, 177);
+            this.addTaskBtn.Location = new System.Drawing.Point(198, 163);
             this.addTaskBtn.Name = "addTaskBtn";
-            this.addTaskBtn.Size = new System.Drawing.Size(63, 25);
+            this.addTaskBtn.Size = new System.Drawing.Size(73, 23);
             this.addTaskBtn.TabIndex = 2;
             this.addTaskBtn.Text = "Add";
             this.addTaskBtn.UseVisualStyleBackColor = true;
@@ -327,9 +327,9 @@ namespace MqttSender
             this.additionalDetailGroupBox.Controls.Add(this.msgTickPerDelay);
             this.additionalDetailGroupBox.Controls.Add(this.eventTypeInputF);
             this.additionalDetailGroupBox.Controls.Add(this.tickPerDelayTime);
-            this.additionalDetailGroupBox.Location = new System.Drawing.Point(15, 220);
+            this.additionalDetailGroupBox.Location = new System.Drawing.Point(17, 203);
             this.additionalDetailGroupBox.Name = "additionalDetailGroupBox";
-            this.additionalDetailGroupBox.Size = new System.Drawing.Size(269, 204);
+            this.additionalDetailGroupBox.Size = new System.Drawing.Size(312, 178);
             this.additionalDetailGroupBox.TabIndex = 19;
             this.additionalDetailGroupBox.TabStop = false;
             this.additionalDetailGroupBox.Text = "Additional Input Field";
@@ -338,49 +338,49 @@ namespace MqttSender
             // msgDelayTimeLabel
             // 
             this.msgDelayTimeLabel.AutoSize = true;
-            this.msgDelayTimeLabel.Location = new System.Drawing.Point(5, 51);
+            this.msgDelayTimeLabel.Location = new System.Drawing.Point(6, 47);
             this.msgDelayTimeLabel.Name = "msgDelayTimeLabel";
-            this.msgDelayTimeLabel.Size = new System.Drawing.Size(107, 13);
+            this.msgDelayTimeLabel.Size = new System.Drawing.Size(119, 12);
             this.msgDelayTimeLabel.TabIndex = 17;
             this.msgDelayTimeLabel.Text = "전송 딜레이 시간(초)";
             // 
             // msgDelayTimeInputF
             // 
-            this.msgDelayTimeInputF.Location = new System.Drawing.Point(140, 48);
+            this.msgDelayTimeInputF.Location = new System.Drawing.Point(163, 44);
             this.msgDelayTimeInputF.Name = "msgDelayTimeInputF";
-            this.msgDelayTimeInputF.Size = new System.Drawing.Size(96, 20);
+            this.msgDelayTimeInputF.Size = new System.Drawing.Size(111, 21);
             this.msgDelayTimeInputF.TabIndex = 16;
             // 
             // msgEventTypeLabel
             // 
             this.msgEventTypeLabel.AutoSize = true;
-            this.msgEventTypeLabel.Location = new System.Drawing.Point(6, 80);
+            this.msgEventTypeLabel.Location = new System.Drawing.Point(7, 74);
             this.msgEventTypeLabel.Name = "msgEventTypeLabel";
-            this.msgEventTypeLabel.Size = new System.Drawing.Size(65, 13);
+            this.msgEventTypeLabel.Size = new System.Drawing.Size(69, 12);
             this.msgEventTypeLabel.TabIndex = 14;
             this.msgEventTypeLabel.Text = "이벤트 유형";
             // 
             // msgTickPerDelay
             // 
             this.msgTickPerDelay.AutoSize = true;
-            this.msgTickPerDelay.Location = new System.Drawing.Point(5, 22);
+            this.msgTickPerDelay.Location = new System.Drawing.Point(6, 20);
             this.msgTickPerDelay.Name = "msgTickPerDelay";
-            this.msgTickPerDelay.Size = new System.Drawing.Size(79, 13);
+            this.msgTickPerDelay.Size = new System.Drawing.Size(85, 12);
             this.msgTickPerDelay.TabIndex = 12;
             this.msgTickPerDelay.Text = "딜레이당 틱 수";
             // 
             // eventTypeInputF
             // 
-            this.eventTypeInputF.Location = new System.Drawing.Point(140, 80);
+            this.eventTypeInputF.Location = new System.Drawing.Point(163, 74);
             this.eventTypeInputF.Name = "eventTypeInputF";
-            this.eventTypeInputF.Size = new System.Drawing.Size(96, 20);
+            this.eventTypeInputF.Size = new System.Drawing.Size(111, 21);
             this.eventTypeInputF.TabIndex = 11;
             // 
             // tickPerDelayTime
             // 
-            this.tickPerDelayTime.Location = new System.Drawing.Point(140, 18);
+            this.tickPerDelayTime.Location = new System.Drawing.Point(163, 17);
             this.tickPerDelayTime.Name = "tickPerDelayTime";
-            this.tickPerDelayTime.Size = new System.Drawing.Size(96, 20);
+            this.tickPerDelayTime.Size = new System.Drawing.Size(111, 21);
             this.tickPerDelayTime.TabIndex = 9;
             // 
             // robotDetailGroupBox
@@ -394,9 +394,9 @@ namespace MqttSender
             this.robotDetailGroupBox.Controls.Add(this.robotNameInputField);
             this.robotDetailGroupBox.Controls.Add(this.robotModelInputField);
             this.robotDetailGroupBox.Controls.Add(this.robotSidInputField);
-            this.robotDetailGroupBox.Location = new System.Drawing.Point(15, 6);
+            this.robotDetailGroupBox.Location = new System.Drawing.Point(17, 6);
             this.robotDetailGroupBox.Name = "robotDetailGroupBox";
-            this.robotDetailGroupBox.Size = new System.Drawing.Size(605, 208);
+            this.robotDetailGroupBox.Size = new System.Drawing.Size(706, 192);
             this.robotDetailGroupBox.TabIndex = 18;
             this.robotDetailGroupBox.TabStop = false;
             this.robotDetailGroupBox.Text = "Add Robot Data";
@@ -404,19 +404,19 @@ namespace MqttSender
             // robotListView
             // 
             this.robotListView.HideSelection = false;
-            this.robotListView.Location = new System.Drawing.Point(339, 19);
+            this.robotListView.Location = new System.Drawing.Point(395, 18);
             this.robotListView.MultiSelect = false;
             this.robotListView.Name = "robotListView";
-            this.robotListView.Size = new System.Drawing.Size(260, 183);
+            this.robotListView.Size = new System.Drawing.Size(303, 169);
             this.robotListView.TabIndex = 18;
             this.robotListView.UseCompatibleStateImageBehavior = false;
             this.robotListView.SelectedIndexChanged += new System.EventHandler(this.robotListView_SelectedIndexChanged);
             // 
             // removeRobotBtn
             // 
-            this.removeRobotBtn.Location = new System.Drawing.Point(195, 46);
+            this.removeRobotBtn.Location = new System.Drawing.Point(227, 42);
             this.removeRobotBtn.Name = "removeRobotBtn";
-            this.removeRobotBtn.Size = new System.Drawing.Size(140, 23);
+            this.removeRobotBtn.Size = new System.Drawing.Size(163, 21);
             this.removeRobotBtn.TabIndex = 17;
             this.removeRobotBtn.Text = "Remove Robot";
             this.removeRobotBtn.UseVisualStyleBackColor = true;
@@ -424,9 +424,9 @@ namespace MqttSender
             // 
             // addRobotBtn
             // 
-            this.addRobotBtn.Location = new System.Drawing.Point(195, 19);
+            this.addRobotBtn.Location = new System.Drawing.Point(227, 18);
             this.addRobotBtn.Name = "addRobotBtn";
-            this.addRobotBtn.Size = new System.Drawing.Size(140, 23);
+            this.addRobotBtn.Size = new System.Drawing.Size(163, 21);
             this.addRobotBtn.TabIndex = 15;
             this.addRobotBtn.Text = "Add Robot";
             this.addRobotBtn.UseVisualStyleBackColor = true;
@@ -435,50 +435,50 @@ namespace MqttSender
             // robotNameLabel
             // 
             this.robotNameLabel.AutoSize = true;
-            this.robotNameLabel.Location = new System.Drawing.Point(6, 71);
+            this.robotNameLabel.Location = new System.Drawing.Point(7, 66);
             this.robotNameLabel.Name = "robotNameLabel";
-            this.robotNameLabel.Size = new System.Drawing.Size(80, 13);
+            this.robotNameLabel.Size = new System.Drawing.Size(91, 12);
             this.robotNameLabel.TabIndex = 14;
             this.robotNameLabel.Text = "User Def Name";
             // 
             // robotModelLabel
             // 
             this.robotModelLabel.AutoSize = true;
-            this.robotModelLabel.Location = new System.Drawing.Point(5, 51);
+            this.robotModelLabel.Location = new System.Drawing.Point(6, 47);
             this.robotModelLabel.Name = "robotModelLabel";
-            this.robotModelLabel.Size = new System.Drawing.Size(68, 13);
+            this.robotModelLabel.Size = new System.Drawing.Size(76, 12);
             this.robotModelLabel.TabIndex = 13;
             this.robotModelLabel.Text = "Robot Model";
             // 
             // robotSidLabel
             // 
             this.robotSidLabel.AutoSize = true;
-            this.robotSidLabel.Location = new System.Drawing.Point(5, 28);
+            this.robotSidLabel.Location = new System.Drawing.Point(6, 26);
             this.robotSidLabel.Name = "robotSidLabel";
-            this.robotSidLabel.Size = new System.Drawing.Size(57, 13);
+            this.robotSidLabel.Size = new System.Drawing.Size(60, 12);
             this.robotSidLabel.TabIndex = 12;
             this.robotSidLabel.Text = "Robot SID";
             // 
             // robotNameInputField
             // 
-            this.robotNameInputField.Location = new System.Drawing.Point(93, 68);
+            this.robotNameInputField.Location = new System.Drawing.Point(108, 63);
             this.robotNameInputField.Name = "robotNameInputField";
-            this.robotNameInputField.Size = new System.Drawing.Size(96, 20);
+            this.robotNameInputField.Size = new System.Drawing.Size(111, 21);
             this.robotNameInputField.TabIndex = 11;
             // 
             // robotModelInputField
             // 
-            this.robotModelInputField.Location = new System.Drawing.Point(93, 44);
+            this.robotModelInputField.Location = new System.Drawing.Point(108, 41);
             this.robotModelInputField.Name = "robotModelInputField";
-            this.robotModelInputField.Size = new System.Drawing.Size(96, 20);
+            this.robotModelInputField.Size = new System.Drawing.Size(111, 21);
             this.robotModelInputField.TabIndex = 10;
             this.robotModelInputField.TextChanged += new System.EventHandler(this.textBox11_TextChanged);
             // 
             // robotSidInputField
             // 
-            this.robotSidInputField.Location = new System.Drawing.Point(93, 19);
+            this.robotSidInputField.Location = new System.Drawing.Point(108, 18);
             this.robotSidInputField.Name = "robotSidInputField";
-            this.robotSidInputField.Size = new System.Drawing.Size(96, 20);
+            this.robotSidInputField.Size = new System.Drawing.Size(111, 21);
             this.robotSidInputField.TabIndex = 9;
             this.robotSidInputField.TextChanged += new System.EventHandler(this.robotSidInputField_TextChanged);
             // 
@@ -489,7 +489,7 @@ namespace MqttSender
             this.mqttConnectTabPage.Location = new System.Drawing.Point(4, 22);
             this.mqttConnectTabPage.Name = "mqttConnectTabPage";
             this.mqttConnectTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.mqttConnectTabPage.Size = new System.Drawing.Size(877, 406);
+            this.mqttConnectTabPage.Size = new System.Drawing.Size(1024, 373);
             this.mqttConnectTabPage.TabIndex = 1;
             this.mqttConnectTabPage.Text = "접속 설정";
             this.mqttConnectTabPage.UseVisualStyleBackColor = true;
@@ -502,9 +502,9 @@ namespace MqttSender
             this.mqttScurityInfoGroup.Controls.Add(this.mqttUserNameLabel);
             this.mqttScurityInfoGroup.Controls.Add(this.mqttPassInputF);
             this.mqttScurityInfoGroup.Controls.Add(this.mqttUserNameInputF);
-            this.mqttScurityInfoGroup.Location = new System.Drawing.Point(297, 21);
+            this.mqttScurityInfoGroup.Location = new System.Drawing.Point(346, 19);
             this.mqttScurityInfoGroup.Name = "mqttScurityInfoGroup";
-            this.mqttScurityInfoGroup.Size = new System.Drawing.Size(269, 191);
+            this.mqttScurityInfoGroup.Size = new System.Drawing.Size(314, 176);
             this.mqttScurityInfoGroup.TabIndex = 20;
             this.mqttScurityInfoGroup.TabStop = false;
             this.mqttScurityInfoGroup.Text = "보안 정보 입력 (선택)";
@@ -512,9 +512,9 @@ namespace MqttSender
             // isCredentialEnabledCheckbox
             // 
             this.isCredentialEnabledCheckbox.AutoSize = true;
-            this.isCredentialEnabledCheckbox.Location = new System.Drawing.Point(93, 69);
+            this.isCredentialEnabledCheckbox.Location = new System.Drawing.Point(108, 64);
             this.isCredentialEnabledCheckbox.Name = "isCredentialEnabledCheckbox";
-            this.isCredentialEnabledCheckbox.Size = new System.Drawing.Size(73, 17);
+            this.isCredentialEnabledCheckbox.Size = new System.Drawing.Size(76, 16);
             this.isCredentialEnabledCheckbox.TabIndex = 17;
             this.isCredentialEnabledCheckbox.Text = "암호 허용";
             this.isCredentialEnabledCheckbox.UseVisualStyleBackColor = true;
@@ -523,9 +523,9 @@ namespace MqttSender
             // isSSLConnectCheckBox
             // 
             this.isSSLConnectCheckBox.AutoSize = true;
-            this.isSSLConnectCheckBox.Location = new System.Drawing.Point(93, 30);
+            this.isSSLConnectCheckBox.Location = new System.Drawing.Point(108, 28);
             this.isSSLConnectCheckBox.Name = "isSSLConnectCheckBox";
-            this.isSSLConnectCheckBox.Size = new System.Drawing.Size(71, 17);
+            this.isSSLConnectCheckBox.Size = new System.Drawing.Size(75, 16);
             this.isSSLConnectCheckBox.TabIndex = 16;
             this.isSSLConnectCheckBox.Text = "SSL 연결";
             this.isSSLConnectCheckBox.UseVisualStyleBackColor = true;
@@ -534,34 +534,34 @@ namespace MqttSender
             // mqttPassLabel
             // 
             this.mqttPassLabel.AutoSize = true;
-            this.mqttPassLabel.Location = new System.Drawing.Point(5, 151);
+            this.mqttPassLabel.Location = new System.Drawing.Point(6, 139);
             this.mqttPassLabel.Name = "mqttPassLabel";
-            this.mqttPassLabel.Size = new System.Drawing.Size(51, 13);
+            this.mqttPassLabel.Size = new System.Drawing.Size(53, 12);
             this.mqttPassLabel.TabIndex = 14;
             this.mqttPassLabel.Text = "비밀번호";
             // 
             // mqttUserNameLabel
             // 
             this.mqttUserNameLabel.AutoSize = true;
-            this.mqttUserNameLabel.Location = new System.Drawing.Point(5, 112);
+            this.mqttUserNameLabel.Location = new System.Drawing.Point(6, 103);
             this.mqttUserNameLabel.Name = "mqttUserNameLabel";
-            this.mqttUserNameLabel.Size = new System.Drawing.Size(65, 13);
+            this.mqttUserNameLabel.Size = new System.Drawing.Size(69, 12);
             this.mqttUserNameLabel.TabIndex = 13;
             this.mqttUserNameLabel.Text = "사용자 이름";
             // 
             // mqttPassInputF
             // 
-            this.mqttPassInputF.Location = new System.Drawing.Point(93, 147);
+            this.mqttPassInputF.Location = new System.Drawing.Point(108, 136);
             this.mqttPassInputF.Name = "mqttPassInputF";
-            this.mqttPassInputF.Size = new System.Drawing.Size(96, 20);
+            this.mqttPassInputF.Size = new System.Drawing.Size(111, 21);
             this.mqttPassInputF.TabIndex = 11;
             this.mqttPassInputF.TextChanged += new System.EventHandler(this.mqttPassInputF_TextChanged);
             // 
             // mqttUserNameInputF
             // 
-            this.mqttUserNameInputF.Location = new System.Drawing.Point(93, 108);
+            this.mqttUserNameInputF.Location = new System.Drawing.Point(108, 100);
             this.mqttUserNameInputF.Name = "mqttUserNameInputF";
-            this.mqttUserNameInputF.Size = new System.Drawing.Size(96, 20);
+            this.mqttUserNameInputF.Size = new System.Drawing.Size(111, 21);
             this.mqttUserNameInputF.TabIndex = 10;
             this.mqttUserNameInputF.TextChanged += new System.EventHandler(this.mqttUserNameInputF_TextChanged);
             // 
@@ -576,36 +576,36 @@ namespace MqttSender
             this.mqttBasicInfoGroupBox.Controls.Add(this.mqttTopicInputF);
             this.mqttBasicInfoGroupBox.Controls.Add(this.mqttPortInputF);
             this.mqttBasicInfoGroupBox.Controls.Add(this.mqttIpInputF);
-            this.mqttBasicInfoGroupBox.Location = new System.Drawing.Point(5, 21);
+            this.mqttBasicInfoGroupBox.Location = new System.Drawing.Point(6, 19);
             this.mqttBasicInfoGroupBox.Name = "mqttBasicInfoGroupBox";
-            this.mqttBasicInfoGroupBox.Size = new System.Drawing.Size(269, 191);
+            this.mqttBasicInfoGroupBox.Size = new System.Drawing.Size(314, 176);
             this.mqttBasicInfoGroupBox.TabIndex = 19;
             this.mqttBasicInfoGroupBox.TabStop = false;
             this.mqttBasicInfoGroupBox.Text = "MQTT 정보 입력";
             // 
             // mqttClientIdF
             // 
-            this.mqttClientIdF.Location = new System.Drawing.Point(93, 141);
+            this.mqttClientIdF.Location = new System.Drawing.Point(108, 130);
             this.mqttClientIdF.Name = "mqttClientIdF";
-            this.mqttClientIdF.Size = new System.Drawing.Size(96, 20);
+            this.mqttClientIdF.Size = new System.Drawing.Size(111, 21);
             this.mqttClientIdF.TabIndex = 17;
             this.mqttClientIdF.TextChanged += new System.EventHandler(this.mqttClientIdF_TextChanged);
             // 
             // mqttClientNameLabel
             // 
             this.mqttClientNameLabel.AutoSize = true;
-            this.mqttClientNameLabel.Location = new System.Drawing.Point(5, 144);
+            this.mqttClientNameLabel.Location = new System.Drawing.Point(6, 133);
             this.mqttClientNameLabel.Name = "mqttClientNameLabel";
-            this.mqttClientNameLabel.Size = new System.Drawing.Size(87, 13);
+            this.mqttClientNameLabel.Size = new System.Drawing.Size(93, 12);
             this.mqttClientNameLabel.TabIndex = 16;
             this.mqttClientNameLabel.Text = "클라이언트 이름";
             // 
             // connectionTestBtn1
             // 
-            this.connectionTestBtn1.Font = new System.Drawing.Font("Gulim", 7F);
-            this.connectionTestBtn1.Location = new System.Drawing.Point(207, 165);
+            this.connectionTestBtn1.Font = new System.Drawing.Font("굴림", 7F);
+            this.connectionTestBtn1.Location = new System.Drawing.Point(241, 152);
             this.connectionTestBtn1.Name = "connectionTestBtn1";
-            this.connectionTestBtn1.Size = new System.Drawing.Size(57, 20);
+            this.connectionTestBtn1.Size = new System.Drawing.Size(66, 18);
             this.connectionTestBtn1.TabIndex = 15;
             this.connectionTestBtn1.Text = "접속 테스트";
             this.connectionTestBtn1.UseVisualStyleBackColor = true;
@@ -614,66 +614,66 @@ namespace MqttSender
             // mqttTopicLabel
             // 
             this.mqttTopicLabel.AutoSize = true;
-            this.mqttTopicLabel.Location = new System.Drawing.Point(5, 108);
+            this.mqttTopicLabel.Location = new System.Drawing.Point(6, 100);
             this.mqttTopicLabel.Name = "mqttTopicLabel";
-            this.mqttTopicLabel.Size = new System.Drawing.Size(63, 13);
+            this.mqttTopicLabel.Size = new System.Drawing.Size(69, 12);
             this.mqttTopicLabel.TabIndex = 14;
             this.mqttTopicLabel.Text = "MQTT 토픽";
             // 
             // mqttBrokerPortLabel
             // 
             this.mqttBrokerPortLabel.AutoSize = true;
-            this.mqttBrokerPortLabel.Location = new System.Drawing.Point(5, 69);
+            this.mqttBrokerPortLabel.Location = new System.Drawing.Point(6, 64);
             this.mqttBrokerPortLabel.Name = "mqttBrokerPortLabel";
-            this.mqttBrokerPortLabel.Size = new System.Drawing.Size(73, 13);
+            this.mqttBrokerPortLabel.Size = new System.Drawing.Size(78, 12);
             this.mqttBrokerPortLabel.TabIndex = 13;
             this.mqttBrokerPortLabel.Text = "브로커 PORT";
             // 
             // mqttBrokerIpLabel
             // 
             this.mqttBrokerIpLabel.AutoSize = true;
-            this.mqttBrokerIpLabel.Location = new System.Drawing.Point(5, 28);
+            this.mqttBrokerIpLabel.Location = new System.Drawing.Point(6, 26);
             this.mqttBrokerIpLabel.Name = "mqttBrokerIpLabel";
-            this.mqttBrokerIpLabel.Size = new System.Drawing.Size(53, 13);
+            this.mqttBrokerIpLabel.Size = new System.Drawing.Size(56, 12);
             this.mqttBrokerIpLabel.TabIndex = 12;
             this.mqttBrokerIpLabel.Text = "브로커 IP";
             // 
             // mqttTopicInputF
             // 
-            this.mqttTopicInputF.Location = new System.Drawing.Point(93, 105);
+            this.mqttTopicInputF.Location = new System.Drawing.Point(108, 97);
             this.mqttTopicInputF.Name = "mqttTopicInputF";
-            this.mqttTopicInputF.Size = new System.Drawing.Size(96, 20);
+            this.mqttTopicInputF.Size = new System.Drawing.Size(111, 21);
             this.mqttTopicInputF.TabIndex = 11;
             this.mqttTopicInputF.TextChanged += new System.EventHandler(this.mqttTopicInputF_TextChanged);
             // 
             // mqttPortInputF
             // 
-            this.mqttPortInputF.Location = new System.Drawing.Point(93, 66);
+            this.mqttPortInputF.Location = new System.Drawing.Point(108, 61);
             this.mqttPortInputF.Name = "mqttPortInputF";
-            this.mqttPortInputF.Size = new System.Drawing.Size(96, 20);
+            this.mqttPortInputF.Size = new System.Drawing.Size(111, 21);
             this.mqttPortInputF.TabIndex = 10;
             this.mqttPortInputF.TextChanged += new System.EventHandler(this.mqttPortInputF_TextChanged);
             // 
             // mqttIpInputF
             // 
-            this.mqttIpInputF.Location = new System.Drawing.Point(93, 25);
+            this.mqttIpInputF.Location = new System.Drawing.Point(108, 23);
             this.mqttIpInputF.Name = "mqttIpInputF";
-            this.mqttIpInputF.Size = new System.Drawing.Size(96, 20);
+            this.mqttIpInputF.Size = new System.Drawing.Size(111, 21);
             this.mqttIpInputF.TabIndex = 9;
             this.mqttIpInputF.TextChanged += new System.EventHandler(this.mqttIpInputF_TextChanged);
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(14, 700);
+            this.progressBar1.Location = new System.Drawing.Point(16, 646);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(339, 23);
+            this.progressBar1.Size = new System.Drawing.Size(395, 21);
             this.progressBar1.TabIndex = 5;
             // 
             // processCancelBtn
             // 
-            this.processCancelBtn.Location = new System.Drawing.Point(368, 700);
+            this.processCancelBtn.Location = new System.Drawing.Point(429, 646);
             this.processCancelBtn.Name = "processCancelBtn";
-            this.processCancelBtn.Size = new System.Drawing.Size(68, 25);
+            this.processCancelBtn.Size = new System.Drawing.Size(79, 23);
             this.processCancelBtn.TabIndex = 6;
             this.processCancelBtn.Text = "Stop";
             this.processCancelBtn.UseVisualStyleBackColor = true;
@@ -681,17 +681,17 @@ namespace MqttSender
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(14, 476);
+            this.richTextBox1.Location = new System.Drawing.Point(16, 458);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(877, 217);
+            this.richTextBox1.Size = new System.Drawing.Size(1022, 182);
             this.richTextBox1.TabIndex = 7;
             this.richTextBox1.Text = "";
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(902, 735);
+            this.ClientSize = new System.Drawing.Size(1052, 678);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.processCancelBtn);
             this.Controls.Add(this.progressBar1);
