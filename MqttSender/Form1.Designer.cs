@@ -31,6 +31,7 @@ namespace MqttSender
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.validateBtn = new System.Windows.Forms.Button();
             this.showExampleDataBtn = new System.Windows.Forms.Button();
@@ -38,6 +39,7 @@ namespace MqttSender
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.amrTabPage = new System.Windows.Forms.TabPage();
             this.taskListPanel = new System.Windows.Forms.Panel();
+            this.editTaskBtn = new System.Windows.Forms.Button();
             this.taskListView = new System.Windows.Forms.ListView();
             this.RemoveTaskBtn = new System.Windows.Forms.Button();
             this.seeTaskDetailBtn = new System.Windows.Forms.Button();
@@ -91,7 +93,7 @@ namespace MqttSender
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.processCancelBtn = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.tabControl1.SuspendLayout();
             this.amrTabPage.SuspendLayout();
             this.taskListPanel.SuspendLayout();
@@ -105,7 +107,7 @@ namespace MqttSender
             // 
             // validateBtn
             // 
-            this.validateBtn.Location = new System.Drawing.Point(477, 699);
+            this.validateBtn.Location = new System.Drawing.Point(511, 699);
             this.validateBtn.Name = "validateBtn";
             this.validateBtn.Size = new System.Drawing.Size(130, 26);
             this.validateBtn.TabIndex = 2;
@@ -115,7 +117,7 @@ namespace MqttSender
             // 
             // showExampleDataBtn
             // 
-            this.showExampleDataBtn.Location = new System.Drawing.Point(628, 700);
+            this.showExampleDataBtn.Location = new System.Drawing.Point(647, 699);
             this.showExampleDataBtn.Name = "showExampleDataBtn";
             this.showExampleDataBtn.Size = new System.Drawing.Size(118, 25);
             this.showExampleDataBtn.TabIndex = 1;
@@ -137,10 +139,10 @@ namespace MqttSender
             // 
             this.tabControl1.Controls.Add(this.amrTabPage);
             this.tabControl1.Controls.Add(this.mqttConnectTabPage);
-            this.tabControl1.Location = new System.Drawing.Point(10, 13);
+            this.tabControl1.Location = new System.Drawing.Point(10, 42);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(885, 461);
+            this.tabControl1.Size = new System.Drawing.Size(885, 432);
             this.tabControl1.TabIndex = 4;
             // 
             // amrTabPage
@@ -152,7 +154,7 @@ namespace MqttSender
             this.amrTabPage.Location = new System.Drawing.Point(4, 22);
             this.amrTabPage.Name = "amrTabPage";
             this.amrTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.amrTabPage.Size = new System.Drawing.Size(877, 435);
+            this.amrTabPage.Size = new System.Drawing.Size(877, 406);
             this.amrTabPage.TabIndex = 0;
             this.amrTabPage.Text = "AMR 기본 정보 입력";
             this.amrTabPage.UseVisualStyleBackColor = true;
@@ -160,7 +162,7 @@ namespace MqttSender
             // 
             // taskListPanel
             // 
-            this.taskListPanel.Controls.Add(this.button1);
+            this.taskListPanel.Controls.Add(this.editTaskBtn);
             this.taskListPanel.Controls.Add(this.taskListView);
             this.taskListPanel.Controls.Add(this.RemoveTaskBtn);
             this.taskListPanel.Controls.Add(this.seeTaskDetailBtn);
@@ -168,6 +170,15 @@ namespace MqttSender
             this.taskListPanel.Name = "taskListPanel";
             this.taskListPanel.Size = new System.Drawing.Size(584, 204);
             this.taskListPanel.TabIndex = 21;
+            // 
+            // editTaskBtn
+            // 
+            this.editTaskBtn.Location = new System.Drawing.Point(451, 51);
+            this.editTaskBtn.Name = "editTaskBtn";
+            this.editTaskBtn.Size = new System.Drawing.Size(121, 28);
+            this.editTaskBtn.TabIndex = 4;
+            this.editTaskBtn.Text = "Edit Task";
+            this.editTaskBtn.UseVisualStyleBackColor = true;
             // 
             // taskListView
             // 
@@ -478,7 +489,7 @@ namespace MqttSender
             this.mqttConnectTabPage.Location = new System.Drawing.Point(4, 22);
             this.mqttConnectTabPage.Name = "mqttConnectTabPage";
             this.mqttConnectTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.mqttConnectTabPage.Size = new System.Drawing.Size(877, 435);
+            this.mqttConnectTabPage.Size = new System.Drawing.Size(877, 406);
             this.mqttConnectTabPage.TabIndex = 1;
             this.mqttConnectTabPage.Text = "접속 설정";
             this.mqttConnectTabPage.UseVisualStyleBackColor = true;
@@ -676,15 +687,6 @@ namespace MqttSender
             this.richTextBox1.TabIndex = 7;
             this.richTextBox1.Text = "";
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(451, 51);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(121, 28);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Edit Task";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -718,7 +720,9 @@ namespace MqttSender
             this.ResumeLayout(false);
         }
 
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.MainMenu mainMenu1;
+
+        private System.Windows.Forms.Button editTaskBtn;
 
         private System.Windows.Forms.RichTextBox richTextBox1;
 
