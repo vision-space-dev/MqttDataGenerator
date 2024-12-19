@@ -91,6 +91,7 @@ namespace MqttSender
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.processCancelBtn = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.amrTabPage.SuspendLayout();
             this.taskListPanel.SuspendLayout();
@@ -159,6 +160,7 @@ namespace MqttSender
             // 
             // taskListPanel
             // 
+            this.taskListPanel.Controls.Add(this.button1);
             this.taskListPanel.Controls.Add(this.taskListView);
             this.taskListPanel.Controls.Add(this.RemoveTaskBtn);
             this.taskListPanel.Controls.Add(this.seeTaskDetailBtn);
@@ -179,7 +181,7 @@ namespace MqttSender
             // 
             // RemoveTaskBtn
             // 
-            this.RemoveTaskBtn.Location = new System.Drawing.Point(451, 53);
+            this.RemoveTaskBtn.Location = new System.Drawing.Point(451, 157);
             this.RemoveTaskBtn.Name = "RemoveTaskBtn";
             this.RemoveTaskBtn.Size = new System.Drawing.Size(121, 28);
             this.RemoveTaskBtn.TabIndex = 2;
@@ -193,7 +195,7 @@ namespace MqttSender
             this.seeTaskDetailBtn.Name = "seeTaskDetailBtn";
             this.seeTaskDetailBtn.Size = new System.Drawing.Size(121, 25);
             this.seeTaskDetailBtn.TabIndex = 1;
-            this.seeTaskDetailBtn.Text = "See detail";
+            this.seeTaskDetailBtn.Text = "See task detail";
             this.seeTaskDetailBtn.UseVisualStyleBackColor = true;
             // 
             // taskGroupBox
@@ -674,6 +676,15 @@ namespace MqttSender
             this.richTextBox1.TabIndex = 7;
             this.richTextBox1.Text = "";
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(451, 51);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(121, 28);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "Edit Task";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -706,6 +717,8 @@ namespace MqttSender
             this.mqttBasicInfoGroupBox.PerformLayout();
             this.ResumeLayout(false);
         }
+
+        private System.Windows.Forms.Button button1;
 
         private System.Windows.Forms.RichTextBox richTextBox1;
 

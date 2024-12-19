@@ -493,13 +493,11 @@ namespace MqttSender
 
         private void removeRobotBtn_Click(object sender, EventArgs e)
         {
-            throw new System.NotImplementedException();
+
         }
         
         private void robotListView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            throw new System.NotImplementedException();
         }
-        
     }
 }
