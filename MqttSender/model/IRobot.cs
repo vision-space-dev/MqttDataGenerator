@@ -4,7 +4,7 @@ namespace MqttSender.model
 {
     public interface IRobot<T>
     {
-        void AddTask(T task);
+        bool AddTask(T task);
         LinkedList<T> GetRobotTasks();
         LinkedList<T> GetRobotTasksCopy();
         

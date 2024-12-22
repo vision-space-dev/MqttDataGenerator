@@ -29,7 +29,15 @@ namespace MqttSender.manager
 
         public T GetRobot(string robotSid)
         {
-            return robots[robotSid];
+            try
+            {
+                // Attempt to retrieve the robot from the dictionary
+                return robots[robotSid];
+            }
+            catch (KeyNotFoundException)
+            {
+                return null;
+            }
         }
 
         public bool AddTask(string robotSid, RobotTask task)
@@ -40,8 +48,8 @@ namespace MqttSender.manager
                 return false;
             }
             
-            robot.AddTask(task);
-            return true;
+            //This also checks duplicate task Sid
+            return robot.AddTask(task);
         }
 
         public List<T> GetRobots()

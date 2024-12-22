@@ -40,7 +40,6 @@ namespace MqttSender
         private readonly object GeneratorLock = new object();
         
         private RobotDataGenerator RobotDataGenerator;
-        private TaskHandler TaskHandler = new TaskHandler();
         private RobotManager<AmrRobot> AmrRobotManager = new RobotManager<AmrRobot>();
         private TaskManager TaskManager = TaskManager.GetInstance();
 
@@ -140,6 +139,13 @@ namespace MqttSender
                 return null;
             }
 
+            //Check duplication
+            if (AmrRobotManager.GetRobot(robotSid) != null)
+            {
+                MessageBox.Show("Robot already exists.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+            
             AmrRobot robot = new AmrRobot(robotSid, robotModel, robotName);
             
             return robot;
@@ -302,8 +308,6 @@ namespace MqttSender
             Robot amrRobot = new AmrRobot();
             if (amrRobot != null)
             {
-                // Generate JSON data from the list of AMRRobotInputObject
-                RobotDataGenerator = new RobotDataGenerator(TaskHandler.getTaskQueue());
                 
                 string jsonData = null;
                 
@@ -314,7 +318,6 @@ namespace MqttSender
                 // If the object was not created (return null), notify the user
                 MessageBox.Show("입력 값 오류.", "실패", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            TaskHandler.DequeueAllTask();
         }
         
         private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
@@ -445,8 +448,6 @@ namespace MqttSender
             
             if (AmrRobotManager.AddRobot(robot.GetRobotSid(), robot))
             {
-                
-                Console.WriteLine("Task added successfully.");
                 ListViewItem robotListViewItem = new ListViewItem(robot.GetRobotSid());
                 robotListViewItem.SubItems.Add(robot.GetRobotModelName());
                 robotListViewItem.SubItems.Add(robot.GetRobotName());
@@ -463,7 +464,50 @@ namespace MqttSender
 
         private void removeRobotBtn_Click(object sender, EventArgs e)
         {
+            // Check if any robot is selected
+            if (robotListView.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Please select a robot to remove.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            
+            // Retrieve the selected robot's SID
+            var selectedRobotItem = robotListView.SelectedItems[0];
+            if (selectedRobotItem == null || selectedRobotItem.SubItems.Count == 0 || string.IsNullOrEmpty(selectedRobotItem.SubItems[0].Text))
+            {
+                MessageBox.Show("Invalid robot selection. Please select a valid robot.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
+            string selectedRobotSid = selectedRobotItem.SubItems[0].Text;
+
+            // Confirm the removal action with the user
+            var confirmResult = MessageBox.Show($"Are you sure you want to remove the robot with SID '{selectedRobotSid}' and all its tasks?", 
+                "Confirm Removal", 
+                MessageBoxButtons.YesNo, 
+                MessageBoxIcon.Warning);
+            if (confirmResult == DialogResult.No)
+            {
+                return;
+            }
+
+            // Remove robot data from the Robot Manager
+            bool removed = AmrRobotManager.RemoveRobot(selectedRobotSid);
+
+            if (removed)
+            {
+                // Successfully removed the robot, now remove its entry from the robotListView
+                robotListView.Items.Remove(selectedRobotItem);
+
+                // Also clear the tasks in the taskListView
+                taskListView.Items.Clear();
+
+                MessageBox.Show($"Robot with SID '{selectedRobotSid}' and its related tasks have been removed.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show($"Failed to remove robot with SID '{selectedRobotSid}'. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
         
         private void robotListView_SelectedIndexChanged(object sender, EventArgs e)
@@ -481,20 +525,24 @@ namespace MqttSender
                 Robot robot = AmrRobotManager.GetRobot(selectedRobotSid);
                 LinkedList<RobotTask> robotTasks = robot.GetRobotTasks();
 
-                if (robotTasks != null)
+                if (robotTasks != null && robotTasks.Any()) // Check if tasks exist
                 {
                     // Populate the taskListView with the retrieved tasks
                     foreach (var task in robotTasks)
                     {
-                        ListViewItem taskListViewItem = new ListViewItem(task.TaskId);
-                        taskListViewItem.SubItems.Add(task.Status ?? DEFAULT_TASK_STATUS); // Add status or default
-                        taskListViewItem.SubItems.Add(task.Origin.ToString());
-                        taskListViewItem.SubItems.Add(task.TargetLocation.ToString());
-                        taskListViewItem.SubItems.Add(task.EstimatedEndTime.ToString());
+                        ListViewItem taskListViewItem = new ListViewItem(task.TaskId ?? "Unknown Task"); // Avoid null TaskId
+                        taskListViewItem.SubItems.Add(task.Status ?? DEFAULT_TASK_STATUS); // Add Status or Default
+                        taskListViewItem.SubItems.Add(task.Origin?.ToString() ?? "N/A"); // Safely handle null Origin
+                        taskListViewItem.SubItems.Add(task.TargetLocation?.ToString() ?? "N/A"); // Safely handle null TargetLocation
+                        taskListViewItem.SubItems.Add(task.EstimatedEndTime.ToString()); // Assuming EstimatedEndTime is not null
                         taskListView.Items.Add(taskListViewItem);
                     }
                 }
-            } 
+                else
+                {
+                    MessageBox.Show($"No tasks found for the robot with SID '{selectedRobotSid}'.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
         }
         
         private void addTaskBtn_Click(object sender, EventArgs e)
@@ -504,6 +552,21 @@ namespace MqttSender
             if (robotTask == null)
             {
                 Console.WriteLine("Task is null.");
+                return;
+            }
+            
+            // Check if a robot is selected
+            if (robotListView.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Please select a robot first.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+                
+            // Further validation for the selected robot
+            var selectedRobotItem = robotListView.SelectedItems[0];
+            if (selectedRobotItem == null || selectedRobotItem.SubItems.Count == 0 || string.IsNullOrEmpty(selectedRobotItem.SubItems[0].Text))
+            {
+                MessageBox.Show("Please select a valid robot.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             
@@ -537,8 +600,21 @@ namespace MqttSender
             if (taskListView.SelectedItems.Count > 0)
             {
                 // Check if a robot is selected
-                string selectedRobotSid = robotListView.SelectedItems[0].SubItems[0].Text;
+                if (robotListView.SelectedItems.Count == 0)
+                {
+                    MessageBox.Show("Please select a robot first.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                
+                // Further validation for the selected robot
+                var selectedRobotItem = robotListView.SelectedItems[0];
+                if (selectedRobotItem == null || selectedRobotItem.SubItems.Count == 0 || string.IsNullOrEmpty(selectedRobotItem.SubItems[0].Text))
+                {
+                    MessageBox.Show("Please select a valid robot.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
+                string selectedRobotSid = selectedRobotItem.SubItems[0].Text;
                 if (String.IsNullOrEmpty(selectedRobotSid))
                 {
                     MessageBox.Show("Pleaes select a robot first.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
