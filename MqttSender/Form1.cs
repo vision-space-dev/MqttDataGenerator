@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MqttSender.generator;
+using MqttSender.manager;
 using MqttSender.model;
 using MqttSender.service;
 
@@ -27,8 +28,8 @@ namespace MqttSender
         private const int DEFAULT_AUTORUN_TIME = 60; //in seconds
         private const int DEFAUKT_Z_VALUE = 0;
         private const string DEFAULT_ROBOT_SIDE_VALUE = "TEST_SID";
-        private RobotDataGenerator RobotDataGenerator;
-        private TaskHandler TaskHandler = new TaskHandler();
+        private const string DEFAULT_ROBOT_MODEL_VALUE = "HD1500";
+        private const string DEFAULT_ROBOT_NAME_VALUE = "TEST_NAME";
         private const string DEFAULT_TASK_TYPE = "GENERATED_TASK";
         private const string DEFAULT_TASK_STATUS = "pending";
         private const int DEFAULT_WORKING_TIME = 5;
@@ -37,6 +38,47 @@ namespace MqttSender
         private const string DEFAILT_START_LOC = "255, 255, 0";
         private const string DEFAILT_DEST_LOC = "255, 255, 0";
         private readonly object GeneratorLock = new object();
+        
+        private RobotDataGenerator RobotDataGenerator;
+        private TaskHandler TaskHandler = new TaskHandler();
+        private RobotManager<AmrRobot> AmrRobotManager = new RobotManager<AmrRobot>();
+        private TaskManager TaskManager = TaskManager.GetInstance();
+
+
+        private void InitializeRobotListView()
+        {
+            // Set the View mode to Details to show columns
+            robotListView.View = View.Details;
+
+            // Add columns to the robotListView
+            robotListView.Columns.Add("SID", 50, HorizontalAlignment.Left);
+            robotListView.Columns.Add("Model Name", 100, HorizontalAlignment.Left);
+            robotListView.Columns.Add("Robot Name", 100, HorizontalAlignment.Left);
+
+            robotListView.FullRowSelect = true;
+            robotListView.GridLines = true; 
+            robotListView.MultiSelect = false;
+            robotListView.Scrollable = true;
+        }
+        
+        
+        private void InitializeRobotTaskView()
+        {
+            // Set the View mode to Details to show columns
+            taskListView.View = View.Details;
+
+            // Add columns to the robotListView
+            taskListView.Columns.Add("Task SID", 60, HorizontalAlignment.Left);
+            taskListView.Columns.Add("Origin Pos", 100, HorizontalAlignment.Left);
+            taskListView.Columns.Add("Target Pos", 100, HorizontalAlignment.Left);
+            taskListView.Columns.Add("Move Time", 100, HorizontalAlignment.Left);
+            taskListView.Columns.Add("Idle Time", 100, HorizontalAlignment.Left);
+
+            taskListView.FullRowSelect = true;
+            taskListView.GridLines = true; 
+            taskListView.MultiSelect = true;
+            taskListView.Scrollable = true;
+        }
         
         private void InitializeFields()
         {
@@ -48,6 +90,8 @@ namespace MqttSender
             msgDelayTimeInputF.Text = DEFAULT_MSG_DELAY_TIME.ToString();
             eventTypeInputF.Text = DEFAULT_EVENT_TYPE;
             robotSidInputField.Text = DEFAULT_ROBOT_SIDE_VALUE;
+            robotNameInputField.Text = DEFAULT_ROBOT_NAME_VALUE;
+            robotModelInputField.Text = DEFAULT_ROBOT_MODEL_VALUE;
             workTimeInputField.Text = DEFAULT_WORKING_TIME.ToString();
             moveTimeInputField.Text = DEFAULT_MOVING_TIME.ToString();
             startLocInputField.Text = DEFAILT_START_LOC;
@@ -59,10 +103,20 @@ namespace MqttSender
             mqttPortInputF.KeyPress += inputF_AllowIntegerOnly_TextChanged;
             moveTimeInputField.KeyPress += inputF_AllowIntegerOnly_TextChanged;
             workTimeInputField.KeyPress += inputF_AllowIntegerOnly_TextChanged;
+
+            InitializeRobotListView();
+            InitializeRobotTaskView();
         }
 
         public Form1()
         {
+            VSSMenuBar menuBar = new VSSMenuBar();
+
+            this.MainMenuStrip = menuBar;
+            this.Controls.Add(menuBar);
+            this.Width = 800;
+            this.Height = 600;
+            
             InitializeComponent();
             if (!this.DesignMode)
             {
@@ -73,6 +127,77 @@ namespace MqttSender
             this.mqttPassInputF.Enabled = false;
         }
 
+        //Todo: add robot types enum as a parameter to create desired Robot.
+        private AmrRobot ValidateRobotInputAndCreateAmrRobot()
+        {
+            string robotSid = robotSidInputField.Text;
+            string robotModel = robotModelInputField.Text;
+            string robotName = robotNameInputField.Text;
+
+            if (robotSid.Length == 0 || robotModel.Length == 0 || robotName.Length == 0)
+            {
+                MessageBox.Show("Please fill in all robot fields", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+
+            AmrRobot robot = new AmrRobot(robotSid, robotModel, robotName);
+            
+            return robot;
+        }
+
+        private RobotTask ValidateTaskInputAndCreateTask()
+        {
+            RobotTask task = new RobotTask();
+            string taskId = taskIdInputField.Text;
+            Position startLocation = parsePosition(startLocInputField.Text);
+            Position targetLocation = parsePosition(destLocInputField.Text);
+
+            int moveTimeInSecond = 0;
+            int idleTimeInSecond = 0;
+            try
+            {
+                moveTimeInSecond = int.Parse(moveTimeInputField.Text);
+                idleTimeInSecond = int.Parse(workTimeInputField.Text);
+            }
+            catch (ArgumentNullException e)
+            {
+                MessageBox.Show("Please fill in all task fields", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+            catch (FormatException e)
+            {
+                MessageBox.Show("Start and End location Format is wrong", "Error", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return null;
+            }
+            catch (OverflowException e)
+            {
+                MessageBox.Show("Too large scale", "Error", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return null;
+            }
+            
+            
+            if (taskId.Length == 0 || startLocation == null || targetLocation == null ||
+                moveTimeInSecond == 0 || idleTimeInSecond == 0)
+            {
+                MessageBox.Show("Please fill in all task fields", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+            
+            task.TaskId = taskId;
+            task.Origin = startLocation;
+            task.TargetLocation = targetLocation;
+            task.Type = DEFAULT_TASK_TYPE;
+            task.workTimeSeconds = idleTimeInSecond;
+            task.moveTimeSeconds = moveTimeInSecond;
+            task.EstimatedEndTime = DateTime.Now
+                .AddSeconds(moveTimeInSecond)
+                .AddSeconds(idleTimeInSecond);
+
+            return task;
+        }
+        
         private float parseStringToFloat(string input)
         {
             if (float.TryParse(input, out float result))
@@ -94,35 +219,6 @@ namespace MqttSender
             else
             {
                 throw new InvalidOperationException("메시지 기능 값을 넣어 주세요");
-            }
-        }
-        
-        private AMRRobotInputObject createRobotInputObjectInstance()
-        {
-            try
-            {
-                AMRRobotInputObject inputObject = new AMRRobotInputObject(
-                    robotSidInputField.Text,
-                    robotModelInputField.Text,
-                    robotNameInputField.Text,
-                    parseStringToInt(tickPerDelayTime.Text),
-                    parseStringToInt(msgDelayTimeInputF.Text),
-                    eventTypeInputF.Text,
-                    TaskHandler.getTaskQueue()
-                );
-
-                bool isValid = inputObject.IsValidInputs();
-                if (isValid == false)
-                {
-                    throw new InvalidOperationException("메시지 기능 값을 넣어 주세요");
-                }
-
-                return inputObject;
-            }
-            catch (InvalidOperationException ex)
-            {
-                MessageBox.Show(ex.Message, "입력 값 오류", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return null;
             }
         }
         
@@ -184,34 +280,32 @@ namespace MqttSender
         
         private void validateBtn_Click(object sender, EventArgs e)
         {
-            var robotInputObject = createRobotInputObjectInstance();
+            //Todo: Validate robot inputs
+            Robot robotInputObject = null;
             
-            if (robotInputObject != null)
+            //Todo: Attempts to create object
+            
+            if (robotInputObject != null) // If the object was created successfully, perform further actions
             {
-                // If the object was created successfully, perform further actions
                 MessageBox.Show("입력 값 정상.", "성공", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-            else
+            else // If the object was not created (return null), notify the user
             {
-                // If the object was not created (return null), notify the user
                 MessageBox.Show("입력 값 오류.", "실패", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        //Todo: fix this
         private void showExampleDataBtn_Click(object sender, EventArgs e)
         {
-            TaskHandler.EnqueueAll();
-            
-            List<AMRRobotInputObject> amrRobotInputObjects = new List<AMRRobotInputObject>();
-            AMRRobotInputObject amrRobotInputObject = createRobotInputObjectInstance();
-            
-            if (amrRobotInputObject != null)
-            {
-                amrRobotInputObjects.Add(amrRobotInputObject);
 
+            Robot amrRobot = new AmrRobot();
+            if (amrRobot != null)
+            {
                 // Generate JSON data from the list of AMRRobotInputObject
                 RobotDataGenerator = new RobotDataGenerator(TaskHandler.getTaskQueue());
-                string jsonData = RobotDataGenerator.GenerateRobotDataJson(amrRobotInputObjects, 0);
+                
+                string jsonData = null;
                 
                 MessageBox.Show(jsonData, "데이터 예시", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -228,91 +322,6 @@ namespace MqttSender
         private async void publishMsgBtn_Click(object sender, EventArgs e)
         {
             
-            cancellationTokenSource = new CancellationTokenSource(); // Reset or create a new CancellationTokenSource
-            
-            // Validate necessary inputs
-            int tickPerDelay = int.Parse(tickPerDelayTime.Text); // # of ticks per second
-            int msgDelayTimeSeconds = int.Parse(msgDelayTimeInputF.Text); // seconds
-
-            TaskHandler.EnqueueAll();
-
-            List<AMRRobotInputObject> amrRobotInputObjects = new List<AMRRobotInputObject>();
-            
-            AMRRobotInputObject amrRobotInputObject = createRobotInputObjectInstance();
-            int currentTick = 0;
-            int passedTimeMilli = 0;
-            int totalSeconds = TaskHandler.getTotalTaskDurationInSeconds();
-            int totalTicks = (int)((float)totalSeconds / msgDelayTimeSeconds) * tickPerDelay;
-            int delayTimeMilli = (int)(1000.0 / tickPerDelay); // Convert ticks per second to milliseconds
-            
-            Console.WriteLine($"totalseconds= {totalSeconds}, totalTicks={totalTicks}, delayTimeMilli={delayTimeMilli}, passedTimeMilli={passedTimeMilli}");
-
-            if (amrRobotInputObject != null)
-            {
-                amrRobotInputObjects.Add(amrRobotInputObject);
-
-                // Generate JSON data
-                RobotDataGenerator = new RobotDataGenerator(TaskHandler.getTaskQueue());
-                MqttPublisher publisher = new MqttPublisher();
-                
-                progressBar1.Minimum = 0;
-                progressBar1.Maximum = totalTicks;
-                progressBar1.Value = 0;
-
-                try
-                {
-                    // Connect to the MQTT broker
-                    await publisher.ConnectAsync(mqttIpInputF.Text, int.Parse(mqttPortInputF.Text), mqttClientIdF.Text);
-
-                    // Increment tick and send messages
-                    while (currentTick <= totalTicks)
-                    {
-                        
-                        if (cancellationTokenSource.Token.IsCancellationRequested)
-                        {
-                            MessageBox.Show("Loop cancelled by user", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            break;
-                        }
-                        
-                        //Generate JSON data
-                        string jsonData = RobotDataGenerator.GenerateRobotDataJson(amrRobotInputObjects, delayTimeMilli);
-                        if (jsonData == null)
-                        {
-                            break;
-                        }
-                        //Console.WriteLine(jsonData);
-                        await publisher.SendMessageAsync(mqttTopicInputF.Text, jsonData);
-
-                        // Update the progress bar based on delay time increment
-                        progressBar1.Value = currentTick;
-                        progressBar1.Refresh();
-
-                        await Task.Delay(delayTimeMilli); // Delay between ticks
-                        
-                        //calculate passed time based on the ticks and delay time
-                        passedTimeMilli += delayTimeMilli;
-                        currentTick++;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"오류 발생: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    // Disconnect from the MQTT broker
-                    await publisher.DisconnectAsync();
-                    MessageBox.Show("메시지 전송 완료", "성공!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    progressBar1.Value = 0;
-                    TaskHandler.DequeueAllTask();
-                }
-                
-            }
-            else
-            {
-                // Notify user of input error
-                MessageBox.Show("입력 값 오류.", "실패", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
        private void robotSidInputField_TextChanged(object sender, EventArgs e)
@@ -423,33 +432,99 @@ namespace MqttSender
             };
         }
         
+        private void addRobotBtn_Click(object sender, EventArgs e)
+        {
+            AmrRobot robot = ValidateRobotInputAndCreateAmrRobot();
+            
+            
+            if (robot == null)
+            {
+                MessageBox.Show("Invalid robot input. Please check your data.");
+                return;
+            }
+            
+            if (AmrRobotManager.AddRobot(robot.GetRobotSid(), robot))
+            {
+                
+                Console.WriteLine("Task added successfully.");
+                ListViewItem robotListViewItem = new ListViewItem(robot.GetRobotSid());
+                robotListViewItem.SubItems.Add(robot.GetRobotModelName());
+                robotListViewItem.SubItems.Add(robot.GetRobotName());
+                robotListView.Items.Add(robotListViewItem);   
+            }
+            else
+            {
+                MessageBox.Show("Robot already exists.");
+                return;
+            }
+            
+
+        }
+
+        private void removeRobotBtn_Click(object sender, EventArgs e)
+        {
+
+        }
+        
+        private void robotListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Clear the previous tasks in the taskListView
+            taskListView.Items.Clear();
+
+            // Check if any robot is selected
+            if (robotListView.SelectedItems.Count > 0)
+            {
+                // Retrieve the selected robot's SID from the robotListView
+                string selectedRobotSid = robotListView.SelectedItems[0].SubItems[0].Text; // Assuming SID is in the first column
+
+                // Fetch the tasks for the selected robot
+                Robot robot = AmrRobotManager.GetRobot(selectedRobotSid);
+                LinkedList<RobotTask> robotTasks = robot.GetRobotTasks();
+
+                if (robotTasks != null)
+                {
+                    // Populate the taskListView with the retrieved tasks
+                    foreach (var task in robotTasks)
+                    {
+                        ListViewItem taskListViewItem = new ListViewItem(task.TaskId);
+                        taskListViewItem.SubItems.Add(task.Status ?? DEFAULT_TASK_STATUS); // Add status or default
+                        taskListViewItem.SubItems.Add(task.Origin.ToString());
+                        taskListViewItem.SubItems.Add(task.TargetLocation.ToString());
+                        taskListViewItem.SubItems.Add(task.EstimatedEndTime.ToString());
+                        taskListView.Items.Add(taskListViewItem);
+                    }
+                }
+            } 
+        }
+        
         private void addTaskBtn_Click(object sender, EventArgs e)
         {
-            RobotTask task = new RobotTask();
-            string taskId = taskIdInputField.Text;
-            int workTime = int.Parse(workTimeInputField.Text); //working time
-            int moveTime = int.Parse(moveTimeInputField.Text); //moving time
-            Position startPos = parsePosition(startLocInputField.Text);
-            Position destPos = parsePosition(destLocInputField.Text);
-            
-            task.TaskId = taskId;
-            task.Origin = startPos;
-            task.TargetLocation = destPos;
-            task.Type = DEFAULT_TASK_TYPE;
-            task.EstimatedEndTime = DateTime.Now
-                .AddSeconds(workTime)
-                .AddSeconds(moveTime);
-            task.workTimeSeconds = workTime;
-            task.moveTimeSeconds = moveTime;
-            
-            if (TaskHandler.AddTask(task))
+            RobotTask robotTask = ValidateTaskInputAndCreateTask();
+
+            if (robotTask == null)
             {
-                ListViewItem listViewItem = new ListViewItem(task.TaskId);
-                listViewItem.SubItems.Add(DEFAULT_TASK_STATUS);
-                listViewItem.SubItems.Add(task.Origin.ToString());
-                listViewItem.SubItems.Add(task.TargetLocation.ToString());
-                listViewItem.SubItems.Add(task.EstimatedEndTime.ToString());
-                taskListView.Items.Add(listViewItem);   
+                Console.WriteLine("Task is null.");
+                return;
+            }
+            
+            // Check if a robot is selected
+            string selectedRobotSid = robotListView.SelectedItems[0].SubItems[0].Text;
+
+            if (String.IsNullOrEmpty(selectedRobotSid))
+            {
+                MessageBox.Show("Pleaes select a robot first.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            
+            if (AmrRobotManager.AddTask(selectedRobotSid, robotTask))
+            {
+                Console.WriteLine("Task added successfully.");
+                ListViewItem robotTaskListViewItem = new ListViewItem(robotTask.TaskId);
+                robotTaskListViewItem.SubItems.Add(DEFAULT_TASK_STATUS);
+                robotTaskListViewItem.SubItems.Add(robotTask.Origin.ToString());
+                robotTaskListViewItem.SubItems.Add(robotTask.TargetLocation.ToString());
+                robotTaskListViewItem.SubItems.Add(robotTask.EstimatedEndTime.ToString());
+                taskListView.Items.Add(robotTaskListViewItem);   
             }
             else
             {
@@ -461,10 +536,20 @@ namespace MqttSender
         {
             if (taskListView.SelectedItems.Count > 0)
             {
+                // Check if a robot is selected
+                string selectedRobotSid = robotListView.SelectedItems[0].SubItems[0].Text;
+
+                if (String.IsNullOrEmpty(selectedRobotSid))
+                {
+                    MessageBox.Show("Pleaes select a robot first.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                
+                //Can remove multiple tasks at a same time
                 foreach (ListViewItem selectedItem in taskListView.SelectedItems)
                 {
                     string taskId = selectedItem.SubItems[0].Text; // Retrieve task ID assuming it's at index 1
-                    bool removed = TaskHandler.RemoveTask(taskId);
+                    bool removed = AmrRobotManager.RemoveTask(selectedRobotSid, taskId);
                     if (removed)
                     {
                         taskListView.Items.Remove(selectedItem);   
@@ -485,19 +570,6 @@ namespace MqttSender
                 cancellationTokenSource.Cancel();
             }
         }
-
-        private void addRobotBtn_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void removeRobotBtn_Click(object sender, EventArgs e)
-        {
-
-        }
         
-        private void robotListView_SelectedIndexChanged(object sender, EventArgs e)
-        {
-        }
     }
 }

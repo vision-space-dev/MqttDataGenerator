@@ -10,6 +10,11 @@
         public string Description { get; set; }
         public double Weight { get; set; }
         public Dimensions Dimensions { get; set; }
+        
+        public override string ToString()
+        {
+            return $"Type: {Type}, Description: {Description}, Weight: {Weight}, Dimensions: [{Dimensions}]";
+        }
     }
 
     public class Dimensions
@@ -17,6 +22,11 @@
         public double Length { get; set; }
         public double Width { get; set; }
         public double Height { get; set; }
+        
+        public override string ToString()
+        {
+            return $"Length: {Length}, Width: {Width}, Height: {Height}";
+        }
     }
 
     public class Battery
@@ -38,6 +48,12 @@
         
         [JsonProperty("health")]
         public string Health { get; set; }
+        
+        public override string ToString()
+        {
+            return $"Level: {Level}, Charging: {Charging}, Voltage: {Voltage}, Current: {Current}, Temperature: {Temperature}, Health: {Health}";
+        }
+        
     }
 
     public class RobotData
@@ -63,6 +79,12 @@
         
         [JsonProperty("tasks")]
         public List<RobotTask> Tasks { get; set; }
+        
+        public override string ToString()
+        {
+            var tasksString = Tasks != null ? string.Join(", ", Tasks) : "No Tasks";
+            return $"RobotId: {RobotId}, Status: {Status}, RobotType: {RobotType}, RobotModel: {RobotModel}, Position: {Position}, Battery: [{Battery}], Tasks: [{tasksString}]";
+        }
     }
 
     public class RobotEvent
@@ -73,11 +95,22 @@
         
         [JsonProperty("robotData")]
         public RobotData RobotData { get; set; }
+        
+        public override string ToString()
+        {
+            return $"EventType: {EventType}, RobotData: [{RobotData}]";
+        }
     }
 
     public class RobotDataCollection
     {
         [JsonProperty("robot-data")]
         public List<RobotEvent> RobotData { get; set; }
+        
+        public override string ToString()
+        {
+            var eventsString = RobotData != null ? string.Join("\n", RobotData) : "No Robot Events";
+            return $"RobotData Collection:\n{eventsString}";
+        }
     }
 }

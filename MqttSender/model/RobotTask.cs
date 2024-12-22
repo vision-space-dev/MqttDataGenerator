@@ -38,5 +38,10 @@ namespace MqttSender.model
             this.Priority = MsgPriority.REGULAR_MESSAGE;
             this.Status = "pending";
         }
+        
+        public override string ToString()
+        {
+            return $"TaskId: {TaskId}, TaskStatus: {Status}, TargetLocation: {TargetLocation}";
+        }
     }
 }

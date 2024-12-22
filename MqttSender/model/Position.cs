@@ -18,10 +18,9 @@ namespace MqttSender.model
         [JsonProperty("timestamp")]
         public DateTime Timestamp { get; set; }
 
-        override 
-        public string ToString()
+        public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return $"X: {X}, Y: {Y}, Z: {Z}";
         }
     }
 }
