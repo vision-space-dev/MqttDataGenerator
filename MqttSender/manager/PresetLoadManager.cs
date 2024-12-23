@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 
 namespace MqttSender.manager
 {
+    //Todo: make this generic or identify type based on provided robot type
     public class PresetLoadManager
     {
         private static PresetLoadManager _instance;
@@ -16,19 +17,62 @@ namespace MqttSender.manager
         private PresetLoadManager() { }
 
         // Public static property to access the singleton instance
-        public static PresetLoadManager GetInstance()
+        public static PresetLoadManager GetInstance
         {
-            if (_instance == null)
+            get
             {
-                lock (_lock)
+                if (_instance == null)
                 {
-                    if (_instance == null)
+                    lock (_lock)
                     {
-                        _instance = new PresetLoadManager();
+                        if (_instance == null)
+                        {
+                            _instance = new PresetLoadManager();
+                        }
                     }
                 }
+                return _instance;   
             }
-            return _instance;
+        }
+
+        public RobotManager<AmrRobot> ReflectAmrRobotData(RobotDataCollection robotDataCollection)
+        {
+            RobotManager<AmrRobot> amrRobotManager = new RobotManager<AmrRobot>();
+            amrRobotManager.GetRobots().Clear();
+            foreach (RobotEvent robotEvent in robotDataCollection.RobotData)
+            {
+                string eventType = robotEvent.EventType;
+                RobotData robotData = robotEvent.RobotData;
+
+                if (robotData == null)
+                {
+                    // Log or skip invalid RobotData here if needed
+                    continue;
+                }
+
+                // Parse RobotData into AmrRobot
+                AmrRobot amrRobot = new AmrRobot(
+                    robotData.RobotId, // Assuming RobotId as robot SID
+                    robotData.RobotModel, // Robot model name
+                    robotData.RobotType // Robot name or type
+                );
+
+                amrRobot.SetOriginPosition(robotData.Position);
+                
+                // Add tasks to the robot (if any)
+                if (robotData.Tasks != null)
+                {
+                    foreach (RobotTask task in robotData.Tasks)
+                    {
+                        amrRobot.AddTask(task);
+                    }
+                }
+                
+                amrRobotManager.AddRobot(amrRobot.GetRobotSid(), amrRobot);
+
+            }
+
+            return amrRobotManager;
         }
 
         /// <summary>

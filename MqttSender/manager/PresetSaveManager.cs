@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using MqttSender.model;
 using Newtonsoft.Json;
@@ -8,7 +9,7 @@ using Newtonsoft.Json;
 namespace MqttSender.manager
 {
     //Todo: make this singleton
-    public class PresetSaveManager
+    public class PresetSaveManager<T>
     {
         private static SaveFileDialog saveFileDialog = new SaveFileDialog {
             Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
@@ -17,9 +18,7 @@ namespace MqttSender.manager
             AddExtension = true
         };
         
-        private static string filePath = saveFileDialog.FileName;
-        
-        private static PresetSaveManager _instance;
+        private static PresetSaveManager<T> _instance;
 
         // Lock object for thread safety
         private static readonly object _lock = new object();
@@ -28,7 +27,7 @@ namespace MqttSender.manager
         private PresetSaveManager() { }
 
         // Public static property to access the singleton instance
-        public static PresetSaveManager GetInstance
+        public static PresetSaveManager<T> GetInstance
         {
             get
             {
@@ -38,7 +37,7 @@ namespace MqttSender.manager
                     {
                         if (_instance == null)
                         {
-                            _instance = new PresetSaveManager();
+                            _instance = new PresetSaveManager<T>();
                         }
                     }
                 }
@@ -48,43 +47,93 @@ namespace MqttSender.manager
         
         
         //There will be multiple robots having list of tasks
-        public static void SaveRobotData(List<RobotData> robotData)
+        public void SaveRobotData(List<T> robotData, string filePath)
         {
             if (robotData == null || robotData.Count == 0)
             {
                 Console.WriteLine("No data to save!");
-                return;
+                throw new ArgumentException("No robot data provided to save.");
             }
-            
-            // Show the dialog to get file path from the user
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                string filePath = saveFileDialog.FileName;
 
-                try
+            var robotEvents = new List<RobotEvent>();
+
+            foreach (var robot in robotData)
+            {
+                if (robot == null)
                 {
-                    // Use stream writing for efficient handling of large data
-                    using (var writer = new StreamWriter(filePath))
+                    Console.WriteLine("Encountered a null robot instance, skipping.");
+                    continue;
+                }
+                
+                if (robot is AmrRobot amrRobot)
+                {
+                    //Original position is the very fist origin of the task
+                    var tasks = amrRobot.GetRobotTasks();
+
+                    Position originPosition = null;
+                    if (tasks == null || tasks.Count == 0)
                     {
-                        foreach (var singleData in robotData)
-                        {
-                            // Serialize and write each robot's data to the file
-                            string jsonData = JsonConvert.SerializeObject(singleData, Formatting.Indented);
-                            writer.WriteLine(jsonData);
-                        }
+                        Console.WriteLine("Robot has no tasks, skipping.");
+                        tasks = new LinkedList<RobotTask>(); // Use an empty task list to avoid null issues
+                        originPosition = new Position(0, 0, 0);
                     }
+                    else
+                    {
+                        originPosition = tasks.First.Value.Origin;
+                    }
+                    
+                    
+                    
+                     // Map AmrRobot (or similar type) to RobotData
+                    RobotData robotDataObject = new RobotData
+                    {
+                        RobotId = amrRobot.GetRobotSid(),
+                        Status = "pending",
+                        RobotType = "AMR_ROBOT",
+                        RobotModel = amrRobot.GetRobotModelName(),
+                        Position = originPosition,
+                        Tasks = tasks.Select(task => new RobotTask
+                        {
+                            TaskId = task.TaskId,
+                            Type = task.Type,
+                            Priority = task.Priority,
+                            StartTime = task.StartTime,
+                            EstimatedEndTime = task.EstimatedEndTime,
+                            Status = task.Status,
+                            MoveTimeInSeconds = task.MoveTimeInSeconds,
+                            IdleTimeInSeconds = task.IdleTimeInSeconds,
+                            Origin = task.Origin,
+                            TargetLocation = task.TargetLocation
+                        }).ToList()
+                    };
 
-                    Console.WriteLine($"File successfully saved to {filePath}");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error saving file: {ex.Message}");
+                    robotEvents.Add(new RobotEvent
+                    {
+                        EventType = "REGISTER_NEW_ROBOT",
+                        RobotData = robotDataObject
+                    });
                 }
             }
-            else
+
+            // Wrap in RobotDataCollection for the serialization format:
+            RobotDataCollection dataCollection = new RobotDataCollection
             {
-                Console.WriteLine("File save cancelled.");
-            } 
+                RobotData = robotEvents
+            };
+
+            try
+            {
+                // Serialize and save the JSON to the provided file path
+                string jsonData = JsonConvert.SerializeObject(dataCollection, Formatting.Indented);
+                System.IO.File.WriteAllText(filePath, jsonData);
+
+                Console.WriteLine($"File successfully saved to {filePath}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving file: {ex.Message}");
+                throw; // Re-throw the exception for outer handlers
+            }
         }
     }
 }

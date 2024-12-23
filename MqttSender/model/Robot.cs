@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 
 namespace MqttSender.model
 {
@@ -85,6 +86,19 @@ namespace MqttSender.model
         public LinkedList<RobotTask> GetRobotTasks()
         {
             return RobotTasks;
+        }
+
+        public string GetRobotTasksStr()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("\n");
+            foreach (var task in RobotTasks)
+            {
+                sb.AppendLine("\t");
+                sb.AppendLine(task.ToString());
+            }
+
+            return sb.ToString();
         }
 
         public LinkedList<RobotTask> GetRobotTasksCopy()

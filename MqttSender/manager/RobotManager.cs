@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using MqttSender.model;
 
 namespace MqttSender.manager
@@ -6,7 +8,7 @@ namespace MqttSender.manager
     //Creates Robot object and handles list of robots
     //  - this will contain list of tasks
     // T - Robot
-    public class RobotManager<T> where T : Robot
+    public class RobotManager<T> : IRobotManager<T> where T : Robot
     {
         
         //string - robotSid, T - Robot object
@@ -67,5 +69,29 @@ namespace MqttSender.manager
             T robot = robots[robotSid];
             return robot.RemoveTask(taskSid);
         }
+        
+        public override string ToString()
+        {
+            if (robots.Count == 0)
+            {
+                return null;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("RobotManager currently managing the following robots:");
+
+            foreach (var kvp in robots)
+            {
+                string robotSid = kvp.Key;
+                T robot = kvp.Value;
+
+                sb.AppendLine($"Robot SID: {robotSid}");
+                sb.AppendLine(robot.ToString());
+                sb.AppendLine(new string('-', 50)); // Separator for better formatting
+            }
+
+            return sb.ToString();
+        }
+        
     }
 }

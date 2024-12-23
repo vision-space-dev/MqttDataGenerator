@@ -172,6 +172,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="generator\RobotDataGenerator.cs" />
+    <Compile Include="manager\IRobotManager.cs" />
     <Compile Include="manager\PresetLoadManager.cs" />
     <Compile Include="manager\PresetSaveManager.cs" />
     <Compile Include="manager\RobotManager.cs" />
@@ -182,6 +183,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="service\MqttPublisher.cs" />
     <Compile Include="util\FileUtil.cs" />
+    <Compile Include="util\JsonFormatter.cs" />
     <Compile Include="VSSMenuBar.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

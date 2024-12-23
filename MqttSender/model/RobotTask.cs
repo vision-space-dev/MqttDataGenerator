@@ -20,6 +20,12 @@ namespace MqttSender.model
         [JsonProperty("estimatedEndTime")]
         public DateTime EstimatedEndTime { get; set; }
         
+        [JsonProperty("move-time")]
+        public int MoveTimeInSeconds { get; set; }
+        
+        [JsonProperty("idle-time")]
+        public int IdleTimeInSeconds { get; set; }
+        
         [JsonProperty("status")]
         public string Status { get; set; }
         
@@ -31,8 +37,6 @@ namespace MqttSender.model
         
         [JsonProperty("payload")]
         public Payload Payload { get; set; }
-        public int moveTimeSeconds { get; set; }
-        public int workTimeSeconds { get; set; }
         
         public RobotTask() {
             this.Priority = MsgPriority.REGULAR_MESSAGE;
@@ -41,7 +45,7 @@ namespace MqttSender.model
         
         public override string ToString()
         {
-            return $"TaskId: {TaskId}, TaskStatus: {Status}, TargetLocation: {TargetLocation}";
+            return $"TaskId: {TaskId}, TaskStatus: {Status}, TargetLocation: {TargetLocation}, moveTime: {MoveTimeInSeconds}, idleTime: {IdleTimeInSeconds}, estimatedEndTime: {EstimatedEndTime}";
         }
     }
 }

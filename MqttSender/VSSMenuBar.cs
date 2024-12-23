@@ -9,10 +9,18 @@ namespace MqttSender
     public class VSSMenuBar : MenuStrip
     {
         private readonly PresetLoadManager presetLoadManager;
+        private readonly PresetSaveManager<AmrRobot> presetSaveManager;
+        private readonly Action<RobotManager<AmrRobot>> updateRobotManagerCallback;
+        private readonly Func<RobotManager<AmrRobot>> getRobotManagerFunc;
         
-        public VSSMenuBar()
+        public VSSMenuBar(Func<RobotManager<AmrRobot>> getRobotManagerFunc,
+            Action<RobotManager<AmrRobot>> updateCallback)
         {
-            presetLoadManager = PresetLoadManager.GetInstance();
+            presetLoadManager = PresetLoadManager.GetInstance;
+            presetSaveManager = PresetSaveManager<AmrRobot>.GetInstance;
+            
+            this.getRobotManagerFunc = getRobotManagerFunc;
+            this.updateRobotManagerCallback = updateCallback;
             InitializeMenu();
         }
         
@@ -61,8 +69,44 @@ namespace MqttSender
         
         private void OnSaveClick(object sender, EventArgs e)
         {
-            MessageBox.Show("Save complete");
+            RobotManager<AmrRobot> currentManager = getRobotManagerFunc();
+            Console.WriteLine(currentManager.ToString());
+            if (currentManager != null)
+            {
+                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+                {
+                    saveFileDialog.Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*"; // File type filter
+                    saveFileDialog.Title = "Save RobotManager Data";
+                    saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    saveFileDialog.FileName = "RobotManagerData.json"; // Default file name
+
+                    // Show the Save File Dialog and check if the user clicked OK
+                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        string filePath = saveFileDialog.FileName;
+
+                        try
+                        {
+                            // Save the data using the SaveRobotData method
+                            presetSaveManager.SaveRobotData(currentManager.GetRobots(), filePath);
+                            MessageBox.Show($"Data successfully saved to {filePath}", "Save Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                            // Handle any exceptions during the save process
+                            MessageBox.Show($"An error occurred while saving the data: {ex.Message}", "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("No RobotManager data to save.", "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
+        
+
 
         private void OnOpenClick(object sender, EventArgs e)
         {
@@ -71,8 +115,48 @@ namespace MqttSender
                 MessageBox.Show("Error: PresetLoadManager has not been initialized.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            
+            DialogResult result = MessageBox.Show(
+                "Would you like to load the default file?", 
+                "Load Default File", 
+                MessageBoxButtons.YesNo, 
+                MessageBoxIcon.Question
+            );
 
-            string filePath = FileUtil.GetFilePath();
+            string filePath;
+            if (result == DialogResult.Yes)
+            {
+                // Use FileUtil to get the default file path
+                filePath = FileUtil.GetFilePath(null);
+
+                // Check if the file path is valid
+                if (string.IsNullOrEmpty(filePath) || !System.IO.File.Exists(filePath))
+                {
+                    MessageBox.Show("Default file not found or invalid.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+            else
+            {
+                // Use OpenFileDialog for manual file selection
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                {
+                    openFileDialog.Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*"; // Example filter
+                    openFileDialog.Title = "Open Preset File";
+                    openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        filePath = openFileDialog.FileName;
+                    }
+                    else
+                    {
+                        MessageBox.Show("No file selected.", "Operation Canceled", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                }
+            }
+            
             RobotDataCollection data = presetLoadManager.LoadPresetData(filePath);
             if (data == null)
             {
@@ -80,8 +164,30 @@ namespace MqttSender
             }
             else
             {
-                MessageBox.Show(data.ToString());
-                //Todo: inject robot data into manager and refresh window to reflect the change
+                // Convert the data to JSON format
+                string jsonData;
+                try
+                {
+                    jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(data, Newtonsoft.Json.Formatting.Indented);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to convert data to JSON: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Display the JSON data in a scrollable form
+                //JsonFormatter.ShowJsonInScrollableForm(jsonData);
+
+                //Todo: future implementation - switch manger load based on robot types. Currently we only have AMR
+                RobotManager<AmrRobot> loadedAmrRobotData = presetLoadManager.ReflectAmrRobotData(data);
+                // Update the reference using the callback
+                if (loadedAmrRobotData != null)
+                {
+                    updateRobotManagerCallback?.Invoke(loadedAmrRobotData);
+                }
+                //Console.WriteLine("Loaded AmrRobot Data =" + loadedAmrRobotData.ToString());
+                
             }
         }
 

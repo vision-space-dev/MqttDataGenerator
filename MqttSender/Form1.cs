@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using MqttSender.generator;
 using MqttSender.manager;
@@ -68,10 +63,11 @@ namespace MqttSender
 
             // Add columns to the robotListView
             taskListView.Columns.Add("Task SID", 60, HorizontalAlignment.Left);
-            taskListView.Columns.Add("Origin Pos", 100, HorizontalAlignment.Left);
-            taskListView.Columns.Add("Target Pos", 100, HorizontalAlignment.Left);
-            taskListView.Columns.Add("Move Time", 100, HorizontalAlignment.Left);
-            taskListView.Columns.Add("Idle Time", 100, HorizontalAlignment.Left);
+            taskListView.Columns.Add("Origin Pos", 110, HorizontalAlignment.Left);
+            taskListView.Columns.Add("Target Pos", 110, HorizontalAlignment.Left);
+            taskListView.Columns.Add("Move Time", 50, HorizontalAlignment.Left);
+            taskListView.Columns.Add("Idle seconds", 50, HorizontalAlignment.Left);
+            taskListView.Columns.Add("Estimated Time", 100, HorizontalAlignment.Left);
 
             taskListView.FullRowSelect = true;
             taskListView.GridLines = true; 
@@ -109,7 +105,21 @@ namespace MqttSender
 
         public Form1()
         {
-            VSSMenuBar menuBar = new VSSMenuBar();
+            VSSMenuBar menuBar = new VSSMenuBar(() => AmrRobotManager, updatedManager =>
+            {
+                AmrRobotManager = updatedManager;
+                robotListView?.Items.Clear();
+                taskListView?.Items.Clear();
+                
+                //based on the updated robots, update list
+                foreach (var robot in AmrRobotManager.GetRobots())
+                {
+                    ListViewItem robotListViewItem = new ListViewItem(robot.GetRobotSid());
+                    robotListViewItem.SubItems.Add(robot.GetRobotModelName());
+                    robotListViewItem.SubItems.Add(robot.GetRobotName());
+                    robotListView?.Items.Add(robotListViewItem);   
+                }
+            });
 
             this.MainMenuStrip = menuBar;
             this.Controls.Add(menuBar);
@@ -195,8 +205,8 @@ namespace MqttSender
             task.Origin = startLocation;
             task.TargetLocation = targetLocation;
             task.Type = DEFAULT_TASK_TYPE;
-            task.workTimeSeconds = idleTimeInSecond;
-            task.moveTimeSeconds = moveTimeInSecond;
+            task.IdleTimeInSeconds = idleTimeInSecond;
+            task.MoveTimeInSeconds = moveTimeInSecond;
             task.EstimatedEndTime = DateTime.Now
                 .AddSeconds(moveTimeInSecond)
                 .AddSeconds(idleTimeInSecond);
@@ -530,11 +540,12 @@ namespace MqttSender
                     // Populate the taskListView with the retrieved tasks
                     foreach (var task in robotTasks)
                     {
-                        ListViewItem taskListViewItem = new ListViewItem(task.TaskId ?? "Unknown Task"); // Avoid null TaskId
-                        taskListViewItem.SubItems.Add(task.Status ?? DEFAULT_TASK_STATUS); // Add Status or Default
-                        taskListViewItem.SubItems.Add(task.Origin?.ToString() ?? "N/A"); // Safely handle null Origin
-                        taskListViewItem.SubItems.Add(task.TargetLocation?.ToString() ?? "N/A"); // Safely handle null TargetLocation
-                        taskListViewItem.SubItems.Add(task.EstimatedEndTime.ToString()); // Assuming EstimatedEndTime is not null
+                        ListViewItem taskListViewItem = new ListViewItem(task.TaskId ?? "Unknown Task");
+                        taskListViewItem.SubItems.Add(task.Origin?.ToString());
+                        taskListViewItem.SubItems.Add(task.TargetLocation?.ToString());
+                        taskListViewItem.SubItems.Add(task.MoveTimeInSeconds.ToString());
+                        taskListViewItem.SubItems.Add(task.IdleTimeInSeconds.ToString());
+                        taskListViewItem.SubItems.Add(task.EstimatedEndTime.ToLocalTime() != null ? task.EstimatedEndTime.ToLocalTime().ToString() : "");
                         taskListView.Items.Add(taskListViewItem);
                     }
                 }
@@ -583,10 +594,11 @@ namespace MqttSender
             {
                 Console.WriteLine("Task added successfully.");
                 ListViewItem robotTaskListViewItem = new ListViewItem(robotTask.TaskId);
-                robotTaskListViewItem.SubItems.Add(DEFAULT_TASK_STATUS);
                 robotTaskListViewItem.SubItems.Add(robotTask.Origin.ToString());
                 robotTaskListViewItem.SubItems.Add(robotTask.TargetLocation.ToString());
-                robotTaskListViewItem.SubItems.Add(robotTask.EstimatedEndTime.ToString());
+                robotTaskListViewItem.SubItems.Add(robotTask.MoveTimeInSeconds.ToString());
+                robotTaskListViewItem.SubItems.Add(robotTask.IdleTimeInSeconds.ToString());
+                robotTaskListViewItem.SubItems.Add(robotTask.EstimatedEndTime.ToLocalTime() != null ? robotTask.EstimatedEndTime.ToLocalTime().ToString() : "");
                 taskListView.Items.Add(robotTaskListViewItem);   
             }
             else

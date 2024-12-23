@@ -78,7 +78,7 @@ namespace MqttSender
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.processCancelBtn = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.menuStrip = new VSSMenuBar();
+            this.isRepeatPublish = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.amrTabPage.SuspendLayout();
             this.taskListPanel.SuspendLayout();
@@ -474,7 +474,7 @@ namespace MqttSender
             this.mqttConnectTabPage.Location = new System.Drawing.Point(4, 22);
             this.mqttConnectTabPage.Name = "mqttConnectTabPage";
             this.mqttConnectTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.mqttConnectTabPage.Size = new System.Drawing.Size(1024, 373);
+            this.mqttConnectTabPage.Size = new System.Drawing.Size(1024, 387);
             this.mqttConnectTabPage.TabIndex = 1;
             this.mqttConnectTabPage.Text = "접속 설정";
             this.mqttConnectTabPage.UseVisualStyleBackColor = true;
@@ -651,12 +651,12 @@ namespace MqttSender
             // 
             this.progressBar1.Location = new System.Drawing.Point(16, 646);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(395, 21);
+            this.progressBar1.Size = new System.Drawing.Size(249, 21);
             this.progressBar1.TabIndex = 5;
             // 
             // processCancelBtn
             // 
-            this.processCancelBtn.Location = new System.Drawing.Point(429, 646);
+            this.processCancelBtn.Location = new System.Drawing.Point(271, 646);
             this.processCancelBtn.Name = "processCancelBtn";
             this.processCancelBtn.Size = new System.Drawing.Size(79, 23);
             this.processCancelBtn.TabIndex = 6;
@@ -672,11 +672,21 @@ namespace MqttSender
             this.richTextBox1.TabIndex = 7;
             this.richTextBox1.Text = "";
             // 
+            // isRepeatPublish
+            // 
+            this.isRepeatPublish.Location = new System.Drawing.Point(394, 647);
+            this.isRepeatPublish.Name = "isRepeatPublish";
+            this.isRepeatPublish.Size = new System.Drawing.Size(147, 23);
+            this.isRepeatPublish.TabIndex = 8;
+            this.isRepeatPublish.Text = "Repeat after complete";
+            this.isRepeatPublish.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1052, 678);
+            this.Controls.Add(this.isRepeatPublish);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.processCancelBtn);
             this.Controls.Add(this.progressBar1);
@@ -704,6 +714,8 @@ namespace MqttSender
             this.mqttBasicInfoGroupBox.PerformLayout();
             this.ResumeLayout(false);
         }
+
+        private System.Windows.Forms.CheckBox isRepeatPublish;
 
         private System.Windows.Forms.MenuStrip menuStrip;
 

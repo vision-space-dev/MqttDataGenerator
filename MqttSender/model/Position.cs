@@ -5,6 +5,7 @@ namespace MqttSender.model
 {
     public class Position
     {
+        
         [JsonProperty("x")]
         public double X { get; set; }
         [JsonProperty("y")]
@@ -17,6 +18,19 @@ namespace MqttSender.model
         
         [JsonProperty("timestamp")]
         public DateTime Timestamp { get; set; }
+
+
+        public Position()
+        {
+            
+        }
+        
+        public Position(double x, double y, double z)
+        {
+            this.X = x;
+            this.Y = y;
+            this.Z = z;
+        }
 
         public override string ToString()
         {
