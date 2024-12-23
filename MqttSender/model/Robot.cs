@@ -88,6 +88,11 @@ namespace MqttSender.model
             return RobotTasks;
         }
 
+        public RobotTask GetRobotTask(string taskSid)
+        {
+            return RobotTasksDict[taskSid];
+        }
+
         public string GetRobotTasksStr()
         {
             StringBuilder sb = new StringBuilder();

@@ -19,7 +19,7 @@ namespace MqttSender.service
         
         public async Task ConnectAsync(string brokerHost, int brokerPort, string clientId,
             bool withTls = false, string username = null, string password = null,
-            int timeoutMilliseconds = 5000)
+            int timeoutMilliseconds = 2000)
         {
             var optionsBuilder = new MqttClientOptionsBuilder()
                 .WithClientId(clientId)

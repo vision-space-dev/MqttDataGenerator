@@ -56,8 +56,6 @@ namespace MqttSender.manager
                     robotData.RobotModel, // Robot model name
                     robotData.RobotType // Robot name or type
                 );
-
-                amrRobot.SetOriginPosition(robotData.Position);
                 
                 // Add tasks to the robot (if any)
                 if (robotData.Tasks != null)

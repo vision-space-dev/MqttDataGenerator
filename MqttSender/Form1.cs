@@ -2,14 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using MqttSender.generator;
 using MqttSender.manager;
 using MqttSender.model;
 using MqttSender.service;
+using Newtonsoft.Json;
 
 namespace MqttSender
 {
+    /*internal partial class EditTaskForm : Form
+    {
+        private void editTaskSaveButton_Click(object sender, EventArgs e)
+        {
+            
+        }
+    }*/
+    
     public partial class Form1 : Form
     {
         private const string MQTT_DEFAULT_IP = "localhost";
@@ -17,7 +27,7 @@ namespace MqttSender
         private const string MQTT_DEFAULT_TOPIC = "vss-topic-external";
         private const string MQTT_DEFAULT_CLIENT_ID = "test-client-generator";
         private const int DEFAULT_MSG_COUNT_PER_SECOND = 5;
-        private const int DEFAULT_MSG_DELAY_TIME = 1;
+        private const int DEFAULT_MSG_DELAY_TIME = 500;
         private const int DEFAULT_LOCATION_VARIANT_VALUE = 5;
         private const string DEFAULT_EVENT_TYPE = "REGISTER_NEW_ROBOT";
         private const int DEFAULT_AUTORUN_TIME = 60; //in seconds
@@ -32,12 +42,11 @@ namespace MqttSender
         private const string DEFAULT_TASK_ID = "task1";
         private const string DEFAILT_START_LOC = "255, 255, 0";
         private const string DEFAILT_DEST_LOC = "255, 255, 0";
-        private readonly object GeneratorLock = new object();
+        private bool isRepeatProcess = false;
+        private MqttPublisher mqttPublisher;
         
         private RobotDataGenerator RobotDataGenerator;
         private RobotManager<AmrRobot> AmrRobotManager = new RobotManager<AmrRobot>();
-        private TaskManager TaskManager = TaskManager.GetInstance();
-
 
         private void InitializeRobotListView()
         {
@@ -81,7 +90,6 @@ namespace MqttSender
             mqttPortInputF.Text = MQTT_DEFAULT_PORT;
             mqttTopicInputF.Text = MQTT_DEFAULT_TOPIC;
             mqttClientIdF.Text = MQTT_DEFAULT_CLIENT_ID;
-            tickPerDelayTime.Text = DEFAULT_MSG_COUNT_PER_SECOND.ToString();
             msgDelayTimeInputF.Text = DEFAULT_MSG_DELAY_TIME.ToString();
             eventTypeInputF.Text = DEFAULT_EVENT_TYPE;
             robotSidInputField.Text = DEFAULT_ROBOT_SIDE_VALUE;
@@ -92,15 +100,72 @@ namespace MqttSender
             startLocInputField.Text = DEFAILT_START_LOC;
             destLocInputField.Text = DEFAILT_DEST_LOC;
             taskIdInputField.Text = DEFAULT_TASK_ID;
-            tickPerDelayTime.KeyPress += inputF_AllowIntegerOnly_TextChanged;
             msgDelayTimeInputF.KeyPress += inputF_AllowIntegerOnly_TextChanged;
-            tickPerDelayTime.KeyPress += inputF_AllowIntegerOnly_TextChanged;
             mqttPortInputF.KeyPress += inputF_AllowIntegerOnly_TextChanged;
             moveTimeInputField.KeyPress += inputF_AllowIntegerOnly_TextChanged;
             workTimeInputField.KeyPress += inputF_AllowIntegerOnly_TextChanged;
 
             InitializeRobotListView();
             InitializeRobotTaskView();
+            InitializeMqttConnection();
+        }
+
+        private async void InitializeMqttConnection()
+        {
+            mqttPublisher = new MqttPublisher();
+            var currentContext = SynchronizationContext.Current;
+            
+            try
+            {
+                DisableForm();
+                Cursor = Cursors.WaitCursor;
+                
+                currentContext?.Post(_ => 
+                {
+                    progressBar1.Style = ProgressBarStyle.Marquee;
+                    progressBar1.MarqueeAnimationSpeed = 30;
+                }, null);
+                
+                progressBar1.Style = ProgressBarStyle.Marquee;
+                progressBar1.MarqueeAnimationSpeed = 30;
+                
+                bool useSSL = isSSLConnectCheckBox.Checked;
+                
+                if (useSSL)
+                {
+                    await mqttPublisher.ConnectAsync(mqttIpInputF.Text, int.Parse(mqttPortInputF.Text), mqttClientIdF.Text, true, timeoutMilliseconds: 5000);
+                }
+                else
+                {
+                    await mqttPublisher.ConnectAsync(mqttIpInputF.Text, int.Parse(mqttPortInputF.Text), mqttClientIdF.Text, false, timeoutMilliseconds: 5000);
+                }
+
+                MessageBox.Show("MQTT 브로커 접속 성공");
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show($"MQTT 브로커 접속 실패: \n {ex.Message}");
+                mqttPublisher = null;
+            }
+            finally
+            {
+                currentContext?.Post(_ => 
+                {
+                    Cursor = Cursors.Default;
+                    EnableForm();
+                }, null);
+            }
+        }
+
+        private bool validateUserInput()
+        {
+            //Todo: restrain message delay time
+            
+            //Todo: restrain coordinate input
+            
+            
+            return false;
         }
 
         public Form1()
@@ -213,42 +278,8 @@ namespace MqttSender
 
             return task;
         }
-        
-        private float parseStringToFloat(string input)
-        {
-            if (float.TryParse(input, out float result))
-            {
-                return (float)Math.Round(result, 4);
-            }
-            else
-            {
-                throw new InvalidOperationException("좌표 값을 넣어주세요");
-            }
-        }
-        
-        private int parseStringToInt(string input)
-        {
-            if (int.TryParse(input, out int result))
-            {
-                return result;
-            }
-            else
-            {
-                throw new InvalidOperationException("메시지 기능 값을 넣어 주세요");
-            }
-        }
-        
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
 
         private void mqttPassInputF_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tabPage1_Click(object sender, EventArgs e)
         {
 
         }
@@ -286,29 +317,12 @@ namespace MqttSender
             }
         }
 
-        private void textBox11_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         
         //Button click events
         
         private void validateBtn_Click(object sender, EventArgs e)
         {
-            //Todo: Validate robot inputs
-            Robot robotInputObject = null;
-            
-            //Todo: Attempts to create object
-            
-            if (robotInputObject != null) // If the object was created successfully, perform further actions
-            {
-                MessageBox.Show("입력 값 정상.", "성공", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            else // If the object was not created (return null), notify the user
-            {
-                MessageBox.Show("입력 값 오류.", "실패", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            MessageBox.Show("Not implemented yet");
         }
 
         //Todo: fix this
@@ -332,86 +346,122 @@ namespace MqttSender
         
         private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         
+        //Very important section for generating and publishing robot task handled by taskManager
+        //Todo: in the future, try to send off all robot task data in single message rather sending each of them individually
         private async void publishMsgBtn_Click(object sender, EventArgs e)
         {
+
+            if (mqttPublisher == null)
+            {
+                MessageBox.Show("Failed to establish mqtt connection with the broker. Using developer mode.");
+            }
             
-        }
+            // Reset the CancellationTokenSource if it's already used or disposed
+            if (cancellationTokenSource.IsCancellationRequested)
+            {
+                cancellationTokenSource.Dispose();
+                cancellationTokenSource = new CancellationTokenSource(); // Create a new one
+            }
+            CancellationToken cancellationToken = cancellationTokenSource.Token;
+            
+            //Collects user defined robot & task data
+            List<AmrRobot> robotList = AmrRobotManager.GetRobots();
+            
+            //This will handle all task by individual robot
+            List<TaskManager> taskManagerList = new List<TaskManager>();
+            
+            //user defined setting
+            int delayTimeInMilliSecond = int.Parse(msgDelayTimeInputF.Text);
 
-       private void robotSidInputField_TextChanged(object sender, EventArgs e)
-       {
+            int largestTotalTaskTimeInMilliSeconds = 0;
+            
+            //Initialize robot task first by provided robot
+            foreach (AmrRobot robot in robotList)
+            {
+                if (robot.GetRobotTasks().Count > 0)
+                {
+                    TaskManager taskManager = new TaskManager(robot, delayTimeInMilliSecond);
+                    taskManagerList.Add(taskManager);
 
-       }
+                    if (taskManager.GetTotalTaskTimeInMilliseconds() > largestTotalTaskTimeInMilliSeconds)
+                    {
+                        largestTotalTaskTimeInMilliSeconds = taskManager.GetTotalTaskTimeInMilliseconds();
+                    }
+                }
+            }
+            
+            progressBar1.Maximum = largestTotalTaskTimeInMilliSeconds;
+            progressBar1.Minimum = 0;
+            progressBar1.Value = 0;
+            
+            bool taskComplete = taskManagerList.Count == 0;
+                
+            //while there's a task manager to still work on
+            while (taskComplete == false)
+            {
+                // Check if cancellation has been requested
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    MessageBox.Show("Process terminated by user");
+                    break; // Exit the loop if the process is canceled
+                }
+                
+                
+                //Copy the list of taskManagerList so that it can dynamically remove after the round
+                foreach (var taskManager in taskManagerList.ToList())
+                {
+                    //Process and get generated message - possible null
+                    RobotData generatedRobotData = taskManager.ProcessTask();
+                    LogService.LogRobotDataToRichTextBox(allowMessageSend, generatedRobotData);
 
-       private void groupBox4_Enter(object sender, EventArgs e)
-        {
+                    if (generatedRobotData == null)
+                    {
+                        break;
+                    }
+                    string jsonString = JsonConvert.SerializeObject(generatedRobotData, Formatting.Indented);
+                    
+                    //Publish message
+                    if (mqttPublisher != null && this.messageSendEnabled.Checked)
+                    {
+                        mqttPublisher.SendMessageAsync(mqttTopicInputF.Text, jsonString);
+                    }
+                    if (taskManager.TaskCompleted())
+                    {
+                        Console.WriteLine("Task is completed");
+                        taskManagerList.Remove(taskManager);
+                    }
+                    
+                }
 
-        }
-        
-        private void mqttTopicInputF_TextChanged(object sender, EventArgs e)
-        {
+                if (taskManagerList.Count == 0)
+                {
+                    Console.WriteLine("Task is completed");
+                    taskComplete = true;
+                }
 
-        }
+                if (progressBar1.Value >= largestTotalTaskTimeInMilliSeconds)
+                {
+                    break;
+                }
+                progressBar1.Value += delayTimeInMilliSecond;
+                
+                // Introduce a non-blocking delay to allow user interactions
+                await Task.Delay(delayTimeInMilliSecond);
+                
+            }
 
-        private void mqttPortInputF_TextChanged(object sender, EventArgs e)
-        {
+            //if it's repeated process, start this process again
+            if (isRepeatProcess)
+            {
+                
+            }
 
-        }
-        
-        private void mqttIpInputF_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void mqttClientIdF_TextChanged(object sender, EventArgs e)
-        {
-
+            progressBar1.Value =  0;
         }
 
         private async void connectionTestBtn1_Click(object sender, EventArgs e)
         {
-            var currentContext = SynchronizationContext.Current;
-            
-            try
-            {
-                DisableForm();
-                Cursor = Cursors.WaitCursor;
-                
-                currentContext?.Post(_ => 
-                {
-                    progressBar1.Style = ProgressBarStyle.Marquee;
-                    progressBar1.MarqueeAnimationSpeed = 30;
-                }, null);
-                
-                progressBar1.Style = ProgressBarStyle.Marquee;
-                progressBar1.MarqueeAnimationSpeed = 30;
-
-                MqttPublisher mqttPublisher = new MqttPublisher();
-                bool useSSL = isSSLConnectCheckBox.Checked;
-                
-                if (useSSL)
-                {
-                    await mqttPublisher.ConnectAsync(mqttIpInputF.Text, int.Parse(mqttPortInputF.Text), mqttClientIdF.Text, true, timeoutMilliseconds: 5000);
-                }
-                else
-                {
-                    await mqttPublisher.ConnectAsync(mqttIpInputF.Text, int.Parse(mqttPortInputF.Text), mqttClientIdF.Text, false, timeoutMilliseconds: 5000);
-                }
-
-                MessageBox.Show("MQTT 브로커 접속 성공");
-            }
-            catch (Exception ex)
-            {
-
-                MessageBox.Show($"MQTT 브로커 접속 실패: \n {ex.Message}");
-            }
-            finally
-            {
-                currentContext?.Post(_ => 
-                {
-                    Cursor = Cursors.Default;
-                    EnableForm();
-                }, null);
-            }
+            InitializeMqttConnection();
         }
         
         private void DisableForm()
@@ -646,18 +696,121 @@ namespace MqttSender
             }
         }
 
-        private void taskIdInputField_TextChanged(object sender, EventArgs e)
-        {
-           
-        }
-
         private void cancelProcessBtn_Click(object sender, EventArgs e)
         {
-            if (cancellationTokenSource != null)
+            if (cancellationTokenSource != null && !cancellationTokenSource.IsCancellationRequested)
             {
                 cancellationTokenSource.Cancel();
+                Console.WriteLine("Cancellation requested.");
             }
         }
-        
+
+        private void isRepeatPublish_CheckedChanged(object sender, EventArgs e)
+        {
+            if (sender is CheckBox checkBox)
+            {
+                // Assign the boolean value from the `Checked` property of the CheckBox
+                isRepeatProcess = checkBox.Checked;
+                Console.WriteLine($"Repeat Publish is set to: {isRepeatPublish}");
+            }
+            else
+            {
+                Console.WriteLine("Event sender is not a CheckBox.");
+            }
+        }
+
+        private void tickPerDelayTime_TextChanged(object sender, EventArgs e)
+        {
+            // Cast sender to TextBox
+            TextBox textBox = sender as TextBox;
+            
+            if (textBox != null)
+            {
+                // Check if the text is numeric
+                if (System.Text.RegularExpressions.Regex.IsMatch(textBox.Text, "^[0-9]*$")) // Only digits are allowed
+                {
+                    // Input is valid, no action needed
+                }
+                else
+                {
+                    // Input is invalid, remove the last character or reset to empty
+                    MessageBox.Show("Please enter a valid integer.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    textBox.Text = new string(textBox.Text.Where(char.IsDigit).ToArray()); // Remove invalid characters
+                    textBox.SelectionStart = textBox.Text.Length; // Place the caret at the end
+                }
+            }
+        }
+
+        private void msgDelayTimeInputF_TextChanged(object sender, EventArgs e)
+        {
+            // Cast sender to TextBox
+            TextBox textBox = sender as TextBox;
+            
+            if (textBox != null)
+            {
+                // Check if the text is numeric
+                if (System.Text.RegularExpressions.Regex.IsMatch(textBox.Text, "^[0-9]*$")) // Only digits are allowed
+                {
+                    // Input is valid, no action needed
+                }
+                else
+                {
+                    // Input is invalid, remove the last character or reset to empty
+                    MessageBox.Show("Please enter a valid integer.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    textBox.Text = new string(textBox.Text.Where(char.IsDigit).ToArray()); // Remove invalid characters
+                    textBox.SelectionStart = textBox.Text.Length; // Place the caret at the end
+                }
+            }
+        }
+
+        private void editTaskBtn_Click(object sender, EventArgs e)
+        {
+            if (taskListView.SelectedItems.Count != 1)
+            {
+                MessageBox.Show("Please select one task to edit.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (robotListView.SelectedItems.Count != 1)
+            {
+                MessageBox.Show("Please select one robot to use edit.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            string robotSid = robotListView.SelectedItems[0].SubItems[0].Text;
+            string taskSid = taskListView.SelectedItems[0].SubItems[0].Text; // Assuming SID is in the first column
+            
+            AmrRobot robot = AmrRobotManager.GetRobot(robotSid);
+            if (robot == null)
+            {
+                MessageBox.Show($"Robot with SID '{robotSid}' not found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Retrieve the RobotTask object
+            RobotTask task = robot.GetRobotTask(taskSid);
+            if (task == null)
+            {
+                MessageBox.Show($"Task with SID '{taskSid}' not found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            
+            /*// 1. Prompt Window to Edit Task Parameters
+            using (EditTaskForm editTaskForm = new EditTaskForm(task))
+            {
+                if (editTaskForm.ShowDialog() == DialogResult.OK)
+                {
+                    // Reflect the updated task details back to the task list view.
+
+                    // Update the task info in the ListView (UI representation)
+                    taskListView.SelectedItems[0].SubItems[1].Text = task.Origin.ToString();
+                    taskListView.SelectedItems[0].SubItems[2].Text = task.TargetLocation.ToString();
+                    taskListView.SelectedItems[0].SubItems[3].Text = task.MoveTimeInSeconds.ToString();
+                    taskListView.SelectedItems[0].SubItems[4].Text = task.IdleTimeInSeconds.ToString();
+
+                    MessageBox.Show("Task updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }*/
+        }
     }
 }
