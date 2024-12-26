@@ -16,8 +16,10 @@ namespace MqttSender.model
         [JsonProperty("orientation")]
         public double Orientation { get; set; }
         
+        
+        //with milli format - 2024-12-26 15:19:44.624
         [JsonProperty("timestamp")]
-        public DateTime Timestamp { get; set; }
+        public string Timestamp { get; set; }
 
 
         public Position()

@@ -80,6 +80,9 @@
         [JsonProperty("tasks")]
         public List<RobotTask> Tasks { get; set; }
         
+        [JsonProperty("location")]
+        public Location Location { get; set; }
+        
         public override string ToString()
         {
             var tasksString = Tasks != null ? string.Join(", ", Tasks) : "No Tasks";

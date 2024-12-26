@@ -49,7 +49,7 @@ namespace MqttSender.generator
             if (isIdle)
             {
                 currentPosition = endPosition;
-                currentPosition.Timestamp = DateTime.Now;
+                currentPosition.Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
             }
             else //calculate position based on the (end point - start point)
             {
@@ -74,7 +74,20 @@ namespace MqttSender.generator
                     Y = currentY,
                     Z = currentZ
                 };
-                currentPosition.Timestamp = DateTime.Now;
+                currentPosition.Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            }
+            
+            //initialize location
+            Location location = new Location();
+            if (amrRobot.GetLocationId() != null)
+            {
+                location.locationSid = amrRobot.GetLocationId();
+                if (amrRobot.GetFacilityId() != null)
+                {
+                    Location.Facility facility = new Location.Facility();
+                    facility.facilitySid = amrRobot.GetFacilityId();
+                    location.facility = facility;
+                }
             }
             
             // Log the robot data to the console or debug output
@@ -85,8 +98,10 @@ namespace MqttSender.generator
                 RobotType = "AMR_ROBOT",
                 RobotModel = amrRobot.GetRobotModelName(),
                 Position = currentPosition,
-                Tasks = new List<RobotTask> { currentTask }
+                Tasks = new List<RobotTask> { currentTask },
+                Location = location
             };
+
             
             return robotData;
         }

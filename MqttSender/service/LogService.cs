@@ -25,9 +25,7 @@ namespace MqttSender.service
             string robotSid = robotData.RobotId;
             Position startPosition = robotData.Position;
             RobotTask robotTask = robotTasks[0];
-            string timeStamp = startPosition.Timestamp.ToString("yyyy-MM-dd HH:mm:ss.fff");
-
-            string logContent = $"Timestamp: {timeStamp} | Robot ID: {robotSid} | " +
+            string logContent = $"Timestamp: {startPosition.Timestamp} | Robot ID: {robotSid} | " +
                                 $"Start Position: (X: {startPosition.X}, Y: {startPosition.Y}, Z: {startPosition.Z}) | " +
                                 $"Target Position: (X: {robotTask.TargetLocation.X}, Y: {robotTask.TargetLocation.Y}, Z: {robotTask.TargetLocation.Z}) | " +
                                 $"Status: {robotData.Status}";

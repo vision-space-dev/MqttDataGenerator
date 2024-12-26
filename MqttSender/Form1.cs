@@ -44,6 +44,8 @@ namespace MqttSender
         private const string DEFAILT_DEST_LOC = "255, 255, 0";
         private bool isRepeatProcess = false;
         private MqttPublisher mqttPublisher;
+        private const string DEFAULT_LOCATION_SID = "TEST_LOC_0001";
+        private const string DEFAULT_FACILITY_SID = "FAC_001";
         
         private RobotDataGenerator RobotDataGenerator;
         private RobotManager<AmrRobot> AmrRobotManager = new RobotManager<AmrRobot>();
@@ -57,6 +59,8 @@ namespace MqttSender
             robotListView.Columns.Add("SID", 50, HorizontalAlignment.Left);
             robotListView.Columns.Add("Model Name", 100, HorizontalAlignment.Left);
             robotListView.Columns.Add("Robot Name", 100, HorizontalAlignment.Left);
+            robotListView.Columns.Add("Location Sid", 100, HorizontalAlignment.Left);
+            robotListView.Columns.Add("Facility Sid", 100, HorizontalAlignment.Left);
 
             robotListView.FullRowSelect = true;
             robotListView.GridLines = true; 
@@ -100,6 +104,8 @@ namespace MqttSender
             startLocInputField.Text = DEFAILT_START_LOC;
             destLocInputField.Text = DEFAILT_DEST_LOC;
             taskIdInputField.Text = DEFAULT_TASK_ID;
+            locationIdInputField.Text = DEFAULT_LOCATION_SID;
+            facilityIdInputField.Text = DEFAULT_FACILITY_SID;
             msgDelayTimeInputF.KeyPress += inputF_AllowIntegerOnly_TextChanged;
             mqttPortInputF.KeyPress += inputF_AllowIntegerOnly_TextChanged;
             moveTimeInputField.KeyPress += inputF_AllowIntegerOnly_TextChanged;
@@ -182,6 +188,8 @@ namespace MqttSender
                     ListViewItem robotListViewItem = new ListViewItem(robot.GetRobotSid());
                     robotListViewItem.SubItems.Add(robot.GetRobotModelName());
                     robotListViewItem.SubItems.Add(robot.GetRobotName());
+                    robotListViewItem.SubItems.Add(robot.GetLocationId());
+                    robotListViewItem.SubItems.Add(robot.GetFacilityId());
                     robotListView?.Items.Add(robotListViewItem);   
                 }
             });
@@ -223,6 +231,12 @@ namespace MqttSender
             
             AmrRobot robot = new AmrRobot(robotSid, robotModel, robotName);
             
+            if (locationIdInputField.Text != null && facilityIdInputField.Text != null)
+            {
+                robot.SetLocationId(locationIdInputField.Text);
+                robot.SetFacilityId(facilityIdInputField.Text);
+            }
+            
             return robot;
         }
 
@@ -260,7 +274,7 @@ namespace MqttSender
             
             
             if (taskId.Length == 0 || startLocation == null || targetLocation == null ||
-                moveTimeInSecond == 0 || idleTimeInSecond == 0)
+                moveTimeInSecond < 0 || idleTimeInSecond < 0)
             {
                 MessageBox.Show("Please fill in all task fields", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return null;
@@ -414,17 +428,32 @@ namespace MqttSender
                     RobotData generatedRobotData = taskManager.ProcessTask();
                     LogService.LogRobotDataToRichTextBox(allowMessageSend, generatedRobotData);
 
-                    if (generatedRobotData == null)
+                    if (generatedRobotData != null)
                     {
-                        break;
-                    }
-                    string jsonString = JsonConvert.SerializeObject(generatedRobotData, Formatting.Indented);
+                        //Reform into publisher message
+                                    
+                        var result = new RobotDataMessage
+                        {
+                            RobotData = new[]
+                            {
+                                new RobotDataEntry
+                                {
+                                    EventType = "REGISTER_NEW_ROBOT",
+                                    RobotData = generatedRobotData
+                                }
+                            }
+                        };
+                        
+                        string jsonString = JsonConvert.SerializeObject(result, Formatting.Indented);
+                        Console.WriteLine(jsonString);
                     
-                    //Publish message
-                    if (mqttPublisher != null && this.messageSendEnabled.Checked)
-                    {
-                        mqttPublisher.SendMessageAsync(mqttTopicInputF.Text, jsonString);
+                        //Publish message
+                        if (mqttPublisher != null && this.messageSendEnabled.Checked)
+                        {
+                            mqttPublisher.SendMessageAsync(mqttTopicInputF.Text, jsonString);
+                        }
                     }
+                    
                     if (taskManager.TaskCompleted())
                     {
                         Console.WriteLine("Task is completed");
@@ -511,6 +540,8 @@ namespace MqttSender
                 ListViewItem robotListViewItem = new ListViewItem(robot.GetRobotSid());
                 robotListViewItem.SubItems.Add(robot.GetRobotModelName());
                 robotListViewItem.SubItems.Add(robot.GetRobotName());
+                robotListViewItem.SubItems.Add(robot.GetLocationId());
+                robotListViewItem.SubItems.Add(robot.GetFacilityId());
                 robotListView.Items.Add(robotListViewItem);   
             }
             else

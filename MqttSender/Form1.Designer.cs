@@ -177,6 +177,8 @@ namespace MqttSender
             this.msgEventTypeLabel = new System.Windows.Forms.Label();
             this.eventTypeInputF = new System.Windows.Forms.TextBox();
             this.robotDetailGroupBox = new System.Windows.Forms.GroupBox();
+            this.locationIdLabel = new System.Windows.Forms.Label();
+            this.locationIdInputField = new System.Windows.Forms.TextBox();
             this.robotListView = new System.Windows.Forms.ListView();
             this.removeRobotBtn = new System.Windows.Forms.Button();
             this.addRobotBtn = new System.Windows.Forms.Button();
@@ -208,6 +210,8 @@ namespace MqttSender
             this.processCancelBtn = new System.Windows.Forms.Button();
             this.allowMessageSend = new System.Windows.Forms.RichTextBox();
             this.isRepeatPublish = new System.Windows.Forms.CheckBox();
+            this.facilityIdLabel = new System.Windows.Forms.Label();
+            this.facilityIdInputField = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.amrTabPage.SuspendLayout();
             this.taskListPanel.SuspendLayout();
@@ -447,7 +451,7 @@ namespace MqttSender
             this.additionalDetailGroupBox.TabStop = false;
             this.additionalDetailGroupBox.Text = "Additional Input Field";
             // 
-            // checkBox1
+            // messageSendEnabled
             // 
             this.messageSendEnabled.Checked = true;
             this.messageSendEnabled.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -495,6 +499,10 @@ namespace MqttSender
             // 
             // robotDetailGroupBox
             // 
+            this.robotDetailGroupBox.Controls.Add(this.facilityIdInputField);
+            this.robotDetailGroupBox.Controls.Add(this.facilityIdLabel);
+            this.robotDetailGroupBox.Controls.Add(this.locationIdLabel);
+            this.robotDetailGroupBox.Controls.Add(this.locationIdInputField);
             this.robotDetailGroupBox.Controls.Add(this.robotListView);
             this.robotDetailGroupBox.Controls.Add(this.removeRobotBtn);
             this.robotDetailGroupBox.Controls.Add(this.addRobotBtn);
@@ -510,6 +518,22 @@ namespace MqttSender
             this.robotDetailGroupBox.TabIndex = 18;
             this.robotDetailGroupBox.TabStop = false;
             this.robotDetailGroupBox.Text = "Add Robot Data";
+            // 
+            // locationIdLabel
+            // 
+            this.locationIdLabel.AutoSize = true;
+            this.locationIdLabel.Location = new System.Drawing.Point(7, 102);
+            this.locationIdLabel.Name = "locationIdLabel";
+            this.locationIdLabel.Size = new System.Drawing.Size(67, 12);
+            this.locationIdLabel.TabIndex = 20;
+            this.locationIdLabel.Text = "Location Id";
+            // 
+            // locationIdInputField
+            // 
+            this.locationIdInputField.Location = new System.Drawing.Point(108, 99);
+            this.locationIdInputField.Name = "locationIdInputField";
+            this.locationIdInputField.Size = new System.Drawing.Size(111, 21);
+            this.locationIdInputField.TabIndex = 19;
             // 
             // robotListView
             // 
@@ -545,7 +569,7 @@ namespace MqttSender
             // robotNameLabel
             // 
             this.robotNameLabel.AutoSize = true;
-            this.robotNameLabel.Location = new System.Drawing.Point(7, 66);
+            this.robotNameLabel.Location = new System.Drawing.Point(7, 75);
             this.robotNameLabel.Name = "robotNameLabel";
             this.robotNameLabel.Size = new System.Drawing.Size(91, 12);
             this.robotNameLabel.TabIndex = 14;
@@ -554,7 +578,7 @@ namespace MqttSender
             // robotModelLabel
             // 
             this.robotModelLabel.AutoSize = true;
-            this.robotModelLabel.Location = new System.Drawing.Point(6, 47);
+            this.robotModelLabel.Location = new System.Drawing.Point(6, 48);
             this.robotModelLabel.Name = "robotModelLabel";
             this.robotModelLabel.Size = new System.Drawing.Size(76, 12);
             this.robotModelLabel.TabIndex = 13;
@@ -571,14 +595,14 @@ namespace MqttSender
             // 
             // robotNameInputField
             // 
-            this.robotNameInputField.Location = new System.Drawing.Point(108, 63);
+            this.robotNameInputField.Location = new System.Drawing.Point(108, 72);
             this.robotNameInputField.Name = "robotNameInputField";
             this.robotNameInputField.Size = new System.Drawing.Size(111, 21);
             this.robotNameInputField.TabIndex = 11;
             // 
             // robotModelInputField
             // 
-            this.robotModelInputField.Location = new System.Drawing.Point(108, 41);
+            this.robotModelInputField.Location = new System.Drawing.Point(108, 45);
             this.robotModelInputField.Name = "robotModelInputField";
             this.robotModelInputField.Size = new System.Drawing.Size(111, 21);
             this.robotModelInputField.TabIndex = 10;
@@ -801,6 +825,22 @@ namespace MqttSender
             this.isRepeatPublish.UseVisualStyleBackColor = true;
             this.isRepeatPublish.CheckedChanged += new System.EventHandler(this.isRepeatPublish_CheckedChanged);
             // 
+            // facilityIdLabel
+            // 
+            this.facilityIdLabel.AutoSize = true;
+            this.facilityIdLabel.Location = new System.Drawing.Point(7, 127);
+            this.facilityIdLabel.Name = "facilityIdLabel";
+            this.facilityIdLabel.Size = new System.Drawing.Size(59, 12);
+            this.facilityIdLabel.TabIndex = 21;
+            this.facilityIdLabel.Text = "Facility Id";
+            // 
+            // facilityIdInputField
+            // 
+            this.facilityIdInputField.Location = new System.Drawing.Point(108, 126);
+            this.facilityIdInputField.Name = "facilityIdInputField";
+            this.facilityIdInputField.Size = new System.Drawing.Size(111, 21);
+            this.facilityIdInputField.TabIndex = 22;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -833,6 +873,12 @@ namespace MqttSender
             this.mqttBasicInfoGroupBox.PerformLayout();
             this.ResumeLayout(false);
         }
+
+        private System.Windows.Forms.Label facilityIdLabel;
+        private System.Windows.Forms.TextBox facilityIdInputField;
+
+        private System.Windows.Forms.TextBox locationIdInputField;
+        private System.Windows.Forms.Label locationIdLabel;
 
         private System.Windows.Forms.CheckBox messageSendEnabled;
 

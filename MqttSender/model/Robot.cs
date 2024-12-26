@@ -14,6 +14,10 @@ namespace MqttSender.model
         private string RobotModelName { get; }
         private string RobotName { get; }
 
+        private string locationId = null;
+
+        private string facilityId = null;
+
         protected Robot()
         {
             //For serialization purposes only
@@ -129,6 +133,26 @@ namespace MqttSender.model
         public string GetRobotName()
         {
             return RobotName;
+        }
+
+        public string GetLocationId()
+        {
+            return this.locationId;
+        }
+
+        public void SetLocationId(string locationSId)
+        {
+            this.locationId = locationSId;
+        }
+
+        public string GetFacilityId()
+        {
+            return facilityId;
+        }
+
+        public void SetFacilityId(string facilitySId)
+        {
+            this.facilityId = facilitySId;
         }
     }
 }
