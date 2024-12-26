@@ -36,7 +36,7 @@ namespace MqttSender
         private const string DEFAULT_ROBOT_MODEL_VALUE = "HD1500";
         private const string DEFAULT_ROBOT_NAME_VALUE = "TEST_NAME";
         private const string DEFAULT_TASK_TYPE = "GENERATED_TASK";
-        private const string DEFAULT_TASK_STATUS = "pending";
+        private const string DEFAULT_TASK_STATUS = "in_progress";
         private const int DEFAULT_WORKING_TIME = 5;
         private const int DEFAULT_MOVING_TIME = 5;
         private const string DEFAULT_TASK_ID = "task1";
@@ -284,6 +284,7 @@ namespace MqttSender
             task.Origin = startLocation;
             task.TargetLocation = targetLocation;
             task.Type = DEFAULT_TASK_TYPE;
+            task.Status = DEFAULT_TASK_STATUS;
             task.IdleTimeInSeconds = idleTimeInSecond;
             task.MoveTimeInSeconds = moveTimeInSecond;
             task.EstimatedEndTime = DateTime.Now
