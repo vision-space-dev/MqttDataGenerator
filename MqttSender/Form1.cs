@@ -358,6 +358,30 @@ namespace MqttSender
                 MessageBox.Show("입력 값 오류.", "실패", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        private int InitializeTaskManager(List<TaskManager> taskManagerList)
+        {
+            List<AmrRobot> robotList = AmrRobotManager.GetRobots();
+            int delayTimeInMilliSecond = int.Parse(msgDelayTimeInputF.Text);
+            int largestTotalTaskTimeInMilliSeconds = 0;
+            
+            //Initialize robot task first by provided robot
+            foreach (AmrRobot robot in robotList)
+            {
+                if (robot.GetRobotTasks().Count > 0)
+                {
+                    TaskManager taskManager = new TaskManager(robot, delayTimeInMilliSecond);
+                    taskManagerList.Add(taskManager);
+
+                    if (taskManager.GetTotalTaskTimeInMilliseconds() > largestTotalTaskTimeInMilliSeconds)
+                    {
+                        largestTotalTaskTimeInMilliSeconds = taskManager.GetTotalTaskTimeInMilliseconds();
+                    }
+                }
+            }
+
+            return largestTotalTaskTimeInMilliSeconds;
+        }
         
         private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         
@@ -379,31 +403,15 @@ namespace MqttSender
             }
             CancellationToken cancellationToken = cancellationTokenSource.Token;
             
-            //Collects user defined robot & task data
-            List<AmrRobot> robotList = AmrRobotManager.GetRobots();
-            
             //This will handle all task by individual robot
             List<TaskManager> taskManagerList = new List<TaskManager>();
             
             //user defined setting
             int delayTimeInMilliSecond = int.Parse(msgDelayTimeInputF.Text);
-
-            int largestTotalTaskTimeInMilliSeconds = 0;
             
-            //Initialize robot task first by provided robot
-            foreach (AmrRobot robot in robotList)
-            {
-                if (robot.GetRobotTasks().Count > 0)
-                {
-                    TaskManager taskManager = new TaskManager(robot, delayTimeInMilliSecond);
-                    taskManagerList.Add(taskManager);
-
-                    if (taskManager.GetTotalTaskTimeInMilliseconds() > largestTotalTaskTimeInMilliSeconds)
-                    {
-                        largestTotalTaskTimeInMilliSeconds = taskManager.GetTotalTaskTimeInMilliseconds();
-                    }
-                }
-            }
+            //Initialize
+            int largestTotalTaskTimeInMilliSeconds = InitializeTaskManager(taskManagerList);
+            
             
             progressBar1.Maximum = largestTotalTaskTimeInMilliSeconds;
             progressBar1.Minimum = 0;
@@ -415,7 +423,7 @@ namespace MqttSender
             allowMessageSend.Text = "";
             
             //while there's a task manager to still work on
-            while (taskComplete == false)
+            while (taskComplete == false || isRepeatProcess == true)
             {
                 // Check if cancellation has been requested
                 if (cancellationToken.IsCancellationRequested)
@@ -436,29 +444,29 @@ namespace MqttSender
                     {
                         //Reform into publisher message
                                     
-                        var result = new RobotDataMessage
+                        /*var result = new RobotDataMessage
                         {
                             RobotData = new[]
                             {
-                                new RobotDataEntry
+                                new RobotData
                                 {
                                     EventType = "REGISTER_NEW_ROBOT",
                                     RobotData = generatedRobotData
                                 }
                             }
-                        };
+                        };*/
                         
-                        string jsonString = JsonConvert.SerializeObject(result, Formatting.Indented);
-                        Console.WriteLine(jsonString);
+                        //string jsonString = JsonConvert.SerializeObject(result, Formatting.Indented);
+                        //Console.WriteLine(jsonString);
                     
                         //Publish message
-                        if (mqttPublisher != null && this.messageSendEnabled.Checked)
+                        /*if (mqttPublisher != null && this.messageSendEnabled.Checked)
                         {
                             mqttPublisher.SendMessageAsync(mqttTopicInputF.Text, jsonString);
-                        }
+                        }*/
                     }
                     
-                    if (taskManager.TaskCompleted())
+                    if (taskManager.TaskCompleted() && isRepeatProcess == false)
                     {
                         Console.WriteLine("Task is completed");
                         taskManagerList.Remove(taskManager);
@@ -466,27 +474,35 @@ namespace MqttSender
                     
                 }
 
-                if (taskManagerList.Count == 0)
+                if (taskManagerList.Count == 0 && isRepeatProcess == false)
                 {
                     Console.WriteLine("Task is completed");
                     taskComplete = true;
                 }
-
+                
                 if (progressBar1.Value >= largestTotalTaskTimeInMilliSeconds)
                 {
-                    break;
+                    if (isRepeatProcess == false)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        taskManagerList = new List<TaskManager>();
+                        largestTotalTaskTimeInMilliSeconds = InitializeTaskManager(taskManagerList);
+                        progressBar1.Value = 0;
+                    }
+                } else if (taskComplete == true && isRepeatProcess == true)
+                {
+                    taskManagerList = new List<TaskManager>();
+                    largestTotalTaskTimeInMilliSeconds = InitializeTaskManager(taskManagerList);
+                    progressBar1.Value = 0;
                 }
+                
                 progressBar1.Value += delayTimeInMilliSecond;
                 
                 // Introduce a non-blocking delay to allow user interactions
                 await Task.Delay(delayTimeInMilliSecond);
-                
-            }
-
-            //if it's repeated process, start this process again
-            if (isRepeatProcess)
-            {
-                
             }
 
             progressBar1.Value =  0;
@@ -830,14 +846,12 @@ namespace MqttSender
                 return;
             }
             
-            /*// 1. Prompt Window to Edit Task Parameters
+            // 1. Prompt Window to Edit Task Parameters
             using (EditTaskForm editTaskForm = new EditTaskForm(task))
             {
                 if (editTaskForm.ShowDialog() == DialogResult.OK)
                 {
-                    // Reflect the updated task details back to the task list view.
-
-                    // Update the task info in the ListView (UI representation)
+                    // Reflect the updated task details in the ListView
                     taskListView.SelectedItems[0].SubItems[1].Text = task.Origin.ToString();
                     taskListView.SelectedItems[0].SubItems[2].Text = task.TargetLocation.ToString();
                     taskListView.SelectedItems[0].SubItems[3].Text = task.MoveTimeInSeconds.ToString();
@@ -845,7 +859,7 @@ namespace MqttSender
 
                     MessageBox.Show("Task updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-            }*/
+            }
         }
     }
 }
