@@ -444,26 +444,25 @@ namespace MqttSender
                     {
                         //Reform into publisher message
                                     
-                        /*var result = new RobotDataMessage
+                        var result = new RobotDataMessage
                         {
                             RobotData = new[]
                             {
-                                new RobotData
+                                new RobotDataEntry
                                 {
                                     EventType = "REGISTER_NEW_ROBOT",
                                     RobotData = generatedRobotData
                                 }
                             }
-                        };*/
+                        };
                         
-                        //string jsonString = JsonConvert.SerializeObject(result, Formatting.Indented);
-                        //Console.WriteLine(jsonString);
+                        string jsonString = JsonConvert.SerializeObject(result, Formatting.Indented);
                     
                         //Publish message
-                        /*if (mqttPublisher != null && this.messageSendEnabled.Checked)
+                        if (mqttPublisher != null && this.messageSendEnabled.Checked)
                         {
                             mqttPublisher.SendMessageAsync(mqttTopicInputF.Text, jsonString);
-                        }*/
+                        }
                     }
                     
                     if (taskManager.TaskCompleted() && isRepeatProcess == false)
