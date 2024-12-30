@@ -410,7 +410,10 @@ namespace MqttSender
             progressBar1.Value = 0;
             
             bool taskComplete = taskManagerList.Count == 0;
-                
+
+            //clear screen
+            allowMessageSend.Text = "";
+            
             //while there's a task manager to still work on
             while (taskComplete == false)
             {

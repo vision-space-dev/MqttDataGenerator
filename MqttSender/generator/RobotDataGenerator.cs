@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MqttSender.model;
+using MqttSender.util;
 
 namespace MqttSender.generator
 {
@@ -67,7 +68,7 @@ namespace MqttSender.generator
                 double currentX = startPosition.X + progress * (endPosition.X - startPosition.X);
                 double currentY = startPosition.Y + progress * (endPosition.Y - startPosition.Y);
                 double currentZ = 0;
-
+                
                 currentPosition = new Position
                 {
                     X = currentX,
@@ -76,6 +77,9 @@ namespace MqttSender.generator
                 };
                 currentPosition.Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
             }
+            
+            double orientation = AngleGenerator.CalculateAngleEndPivot(currentPosition, endPosition);
+            currentPosition.Orientation = orientation;
             
             //initialize location
             Location location = new Location();

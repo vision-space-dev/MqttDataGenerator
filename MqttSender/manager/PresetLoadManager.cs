@@ -66,6 +66,22 @@ namespace MqttSender.manager
                     }
                 }
                 
+                //Load location and facilityId if present
+
+                Location locationData = robotEvent.RobotData.Location;
+                if (locationData!= null)
+                {
+                    if (locationData.locationSid != null)
+                    {
+                        amrRobot.SetLocationId(robotEvent.RobotData.Location.locationSid); 
+                    }
+                    if (locationData.facility != null && locationData.facility.facilitySid != null)
+                    {
+                        amrRobot.SetFacilityId(robotEvent.RobotData.Location.facility.facilitySid);   
+                    }
+                }
+                
+                
                 amrRobotManager.AddRobot(amrRobot.GetRobotSid(), amrRobot);
 
             }

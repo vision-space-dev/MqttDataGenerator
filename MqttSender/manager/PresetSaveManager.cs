@@ -81,8 +81,11 @@ namespace MqttSender.manager
                     {
                         originPosition = tasks.First.Value.Origin;
                     }
-                    
-                    
+
+                    Location location = new Location();
+                    location.locationSid = amrRobot.GetLocationId();
+                    location.facility = new Location.Facility();
+                    location.facility.facilitySid = amrRobot.GetFacilityId();
                     
                      // Map AmrRobot (or similar type) to RobotData
                     RobotData robotDataObject = new RobotData
@@ -92,6 +95,7 @@ namespace MqttSender.manager
                         RobotType = "AMR_ROBOT",
                         RobotModel = amrRobot.GetRobotModelName(),
                         Position = originPosition,
+                        Location = location,
                         Tasks = tasks.Select(task => new RobotTask
                         {
                             TaskId = task.TaskId,

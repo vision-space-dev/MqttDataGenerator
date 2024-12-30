@@ -171,6 +171,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="generator\AngleGenerator.cs" />
     <Compile Include="generator\RobotDataGenerator.cs" />
     <Compile Include="manager\IRobotManager.cs" />
     <Compile Include="manager\PresetLoadManager.cs" />
